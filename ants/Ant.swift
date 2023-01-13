@@ -21,4 +21,18 @@ class Ant: SKSpriteNode {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
+    
+    func move() {
+        if let vel = self.physicsBody?.velocity {
+            if vel.length() < 30.0 {
+                let dx = Double.random(in: -20.0...20.0)
+                let dy = Double.random(in: -20.0...20.0)
+                self.physicsBody!.applyImpulse(CGVector(dx: dx, dy: dy))
+                let vel = self.physicsBody?.velocity
+                if let foo = vel?.angleRadians() {
+                    self.zRotation = foo - .pi/2
+                }
+            }
+        }
+    }
 }

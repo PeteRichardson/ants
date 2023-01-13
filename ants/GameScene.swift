@@ -2,7 +2,8 @@ import SpriteKit
 import Foundation
 
 
-var ant1 : Ant? = nil
+
+var ants : [Ant?] = []
 
 class GameScene: SKScene {
     
@@ -14,22 +15,19 @@ class GameScene: SKScene {
         self.backgroundColor = .white
         physicsWorld.gravity = CGVector (dx: 0.0, dy: 0.0)
         
-        ant1 = Ant(color: .red, size: CGSize(width: 20, height: 20))
-        ant1!.position = CGPoint(x: 400, y:300)
-        addChild(ant1!)
+        let numAnts = 75
+        for _ in 1...numAnts {
+            let s = Int.random(in: 15...20)
+            let ant = Ant(color: .red, size: CGSize(width: s, height: s))
+            ant.position = CGPoint(x: 400, y:300)
+            addChild(ant)
+            ants.insert(ant, at: 0)
+        }
     }
     
     override func update(_ currentTime: TimeInterval) {
-        if let vel = ant1!.physicsBody?.velocity {
-            if vel.length() < 30.0 {
-                let dx = Double.random(in: -20.0...20.0)
-                let dy = Double.random(in: -20.0...20.0)
-                ant1!.physicsBody!.applyImpulse(CGVector(dx: dx, dy: dy))
-                let vel = ant1!.physicsBody?.velocity
-                if let foo = vel?.angleRadians() {
-                    ant1!.zRotation = foo - .pi/2
-                }
-            }
+        for ant in ants {
+            ant?.move()
         }
      }
 }
