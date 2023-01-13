@@ -15,7 +15,10 @@ struct antsApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .frame(minWidth: screenSize.width, maxWidth: screenSize.width, minHeight: screenSize.height, maxHeight: screenSize.height)
+                .frame(minWidth: screenSize.width,
+                       maxWidth: screenSize.width,
+                       minHeight: screenSize.height,
+                       maxHeight: screenSize.height)
         }
     }
 }
