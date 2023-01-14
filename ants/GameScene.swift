@@ -16,11 +16,11 @@ class GameScene: SKScene {
         self.backgroundColor = .white
          physicsWorld.gravity = CGVector (dx: 0.0, dy: 0.0)
         
-        let numAnts = 100
+        let numAnts = 1
         for _ in 1...numAnts {
             let s = Int.random(in: 15...20)
             let ant = Ant(color: .red, size: CGSize(width: s, height: s))
-            ant.position = CGPoint(x: 400, y:300)
+            ant.position = CGPoint(x: CGFloat.random(in: 0...screenSize.width), y: CGFloat.random(in: 0...screenSize.height))
             addChild(ant)
             ants.insert(ant, at: 0)
         }
@@ -29,15 +29,13 @@ class GameScene: SKScene {
         directionLabel!.fontSize = 48
         directionLabel!.fontColor = SKColor.black
         directionLabel!.position = CGPoint(x: 512, y: 0)
-           
         addChild(directionLabel!)
     }
     
     override func update(_ currentTime: TimeInterval) {
         for ant in ants {
-            ant?.move()
+            ant?.update()
         }
         directionLabel?.text = ants[0]!.direction.rounded().description
-        
      }
 }

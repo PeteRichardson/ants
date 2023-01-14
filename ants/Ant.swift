@@ -28,8 +28,8 @@ class Ant: SKSpriteNode {
     
     var direction : CGFloat = 90.0
     
-    func move() {
-        self.direction = self.direction + CGFloat.random(in: -4...4)
+    private func turn(delta: CGFloat) {
+        self.direction = self.direction + delta
         if self.direction > 360 {
             self.direction = self.direction - 360
         } else if self.direction < 0 {
@@ -38,11 +38,19 @@ class Ant: SKSpriteNode {
         
         let directionRadians = self.direction * .pi / -180
         self.run(SKAction.rotate(toAngle: directionRadians, duration: 0.0))
+    }
+    
+    func move() {
         let newLength = 25.0
         let dx = newLength * Darwin.cos(direction)
         let dy = newLength * Darwin.sin(direction)
         let newVec = CGVector(dx: dx, dy: dy)
         //print(dx)
         self.physicsBody!.applyImpulse(newVec)
+    }
+    
+    func update() {
+        turn(delta: CGFloat.random(in: -4...4))
+        move()
     }
 }
