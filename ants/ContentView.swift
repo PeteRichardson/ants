@@ -8,6 +8,7 @@
 import SwiftUI
 import SpriteKit
 
+let screenSize = CGSize(width: 1024, height: 768)
 
 struct ContentView: View {
     var scene: SKScene {
@@ -16,9 +17,19 @@ struct ContentView: View {
         scene.scaleMode = .aspectFit
        return scene
     }
+    
+    @State var debugText: String = "# some debug info"
 
     var body: some View {
-        SpriteView(scene: scene)
+        HStack {
+            SpriteView(scene: scene)
+                .frame(minWidth: screenSize.width,
+                       maxWidth: screenSize.width,
+                       minHeight: screenSize.height,
+                       maxHeight: screenSize.height)
+            TextEditor(text: $debugText)
+                .font(Font.custom("Monaco", size: 12))
+        }
     }
 }
 
