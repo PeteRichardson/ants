@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C100B5B92971FAB000783393 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C100B5B82971FAB000783393 /* Extensions.swift */; };
 		C11FED46297106B300E42166 /* antsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11FED45297106B300E42166 /* antsApp.swift */; };
 		C11FED48297106B300E42166 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11FED47297106B300E42166 /* ContentView.swift */; };
 		C11FED4A297106B400E42166 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C11FED49297106B400E42166 /* Assets.xcassets */; };
@@ -17,7 +16,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		C100B5B82971FAB000783393 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		C11FED42297106B300E42166 /* ants.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ants.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C11FED45297106B300E42166 /* antsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = antsApp.swift; sourceTree = "<group>"; };
 		C11FED47297106B300E42166 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -42,7 +40,6 @@
 		C11FED39297106B300E42166 = {
 			isa = PBXGroup;
 			children = (
-				C100B5B82971FAB000783393 /* Extensions.swift */,
 				C11FED44297106B300E42166 /* ants */,
 				C11FED43297106B300E42166 /* Products */,
 			);
@@ -148,7 +145,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C100B5B92971FAB000783393 /* Extensions.swift in Sources */,
 				C11FED552971083700E42166 /* GameScene.swift in Sources */,
 				C11FED48297106B300E42166 /* ContentView.swift in Sources */,
 				C11FED46297106B300E42166 /* antsApp.swift in Sources */,
