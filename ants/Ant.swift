@@ -12,7 +12,8 @@ import SpriteKit
 class Ant: SKSpriteNode {
 
     init(color: SKColor, size: CGSize) {
-        let texture = SKTexture.init(imageNamed: "ant")
+        let antfilename : String = (color == .red) ? "redant" : "blackant"
+        let texture = SKTexture.init(imageNamed: antfilename)
         super.init(texture: texture, color: color, size: size)
         self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
         self.physicsBody?.friction = 100.0

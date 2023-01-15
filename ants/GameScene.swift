@@ -14,12 +14,14 @@ class GameScene: SKScene {
 
     override func sceneDidLoad() {
         self.backgroundColor = .white
+
         physicsWorld.gravity = CGVector (dx: 0.0, dy: 0.0)
         
         let numAnts = 200
-        for _ in 1...numAnts {
+        for i in 1...numAnts {
             let s = Int.random(in: 13...21)
-            let ant = Ant(color: .red, size: CGSize(width: s, height: s))
+            let color : SKColor = (i % 2) != 0 ? .red : .black
+            let ant = Ant(color: color, size: CGSize(width: s, height: s))
             ant.position = CGPoint(x: CGFloat.random(in: 0...screenSize.width), y: CGFloat.random(in: 0...screenSize.height))
             addChild(ant)
             ants.insert(ant, at: 0)
