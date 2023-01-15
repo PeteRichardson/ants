@@ -11,15 +11,14 @@ import SpriteKit
 let screenSize = CGSize(width: 1024, height: 768)
 
 struct ContentView: View {
+
     var scene: SKScene {
         let scene = GameScene()
         scene.size = CGSize(width: screenSize.width, height: screenSize.height)
         scene.scaleMode = .aspectFit
-       return scene
+        return scene
     }
     
-    @State var debugText: String = "# some debug info"
-
     var body: some View {
         HStack {
             SpriteView(scene: scene)
@@ -27,8 +26,6 @@ struct ContentView: View {
                        maxWidth: screenSize.width,
                        minHeight: screenSize.height,
                        maxHeight: screenSize.height)
-            TextEditor(text: $debugText)
-                .font(Font.custom("Monaco", size: 12))
         }
     }
 }

@@ -6,19 +6,21 @@
 //
 
 import Cocoa
+import SwiftUI
 import SpriteKit
 
 class Ant: SKSpriteNode {
-    
+
     init(color: SKColor, size: CGSize) {
         let texture = SKTexture.init(imageNamed: "ant")
         super.init(texture: texture, color: color, size: size)
         self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
         self.physicsBody?.friction = 100.0
         self.physicsBody!.linearDamping = CGFloat(10)
-//        self.physicsBody!.angularDamping = CGFloat(5.0)
+        self.physicsBody!.angularDamping = CGFloat(5.0)
         self.physicsBody!.isDynamic = true
         self.physicsBody!.mass = 1
+        self.direction = CGFloat.random(in: -.pi ... .pi)
     }
     
     required init?(coder: NSCoder) {
@@ -26,31 +28,23 @@ class Ant: SKSpriteNode {
         self.run(SKAction.rotate(toAngle: self.direction, duration: 0.0))
     }
     
-    var direction : CGFloat = 90.0
+    var direction : CGFloat = 0.0
     
     private func turn(delta: CGFloat) {
         self.direction = self.direction + delta
-        if self.direction > 360 {
-            self.direction = self.direction - 360
-        } else if self.direction < 0 {
-            self.direction = self.direction + 360
-        }
-        
-        let directionRadians = self.direction * .pi / -180
-        self.run(SKAction.rotate(toAngle: directionRadians, duration: 0.0))
+        self.run(SKAction.rotate(toAngle: (.pi * 1.5) + self.direction, duration: 0.0))
     }
     
     func move() {
-        let newLength = 25.0
-        let dx = newLength * Darwin.cos(direction)
-        let dy = newLength * Darwin.sin(direction)
-        let newVec = CGVector(dx: dx, dy: dy)
-        //print(dx)
-        self.physicsBody!.applyImpulse(newVec)
+        let newLength = 1.0
+        let dx = newLength * Darwin.cos(self.direction)
+        let dy = newLength * Darwin.sin(self.direction)
+        self.position = CGPoint(x: self.position.x + dx, y: self.position.y + dy)
     }
     
     func update() {
-        turn(delta: CGFloat.random(in: -4...4))
+        let maxAngleDelta : CGFloat = .pi / 18.0  // randomly change direction by at most ±maxDeltaAngle... ≈ 10˚
+        turn(delta: CGFloat.random(in: -maxAngleDelta ... maxAngleDelta))
         move()
     }
 }

@@ -91,6 +91,8 @@
 			dependencies = (
 			);
 			name = ants;
+			packageProductDependencies = (
+			);
 			productName = ants;
 			productReference = C11FED42297106B300E42166 /* ants.app */;
 			productType = "com.apple.product-type.application";
@@ -119,6 +121,8 @@
 				Base,
 			);
 			mainGroup = C11FED39297106B300E42166;
+			packageReferences = (
+			);
 			productRefGroup = C11FED43297106B300E42166 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
