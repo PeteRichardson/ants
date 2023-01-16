@@ -9,6 +9,9 @@ import SpriteKit
 
 class Ant : SKSpriteNode {
     
+    static var randomFloats = NormalDistribution(mean: 0.0, deviation: 0.2)
+
+    
     var textureFileName : String = "blackant"
     static let defaultMass : CGFloat = 1.0
     static let maxAngleDelta : CGFloat = .pi / 18.0  // randomly change direction by at most ±maxDeltaAngle... ≈ 10˚
@@ -53,8 +56,12 @@ class Ant : SKSpriteNode {
     }
     
     func nextDirection() -> CGFloat {
-        let maxAngleDelta : CGFloat = .pi / 18.0  // randomly change direction by at most ±maxDeltaAngle... ≈ 10˚
-        let newDirection = (self.direction + CGFloat.random(in: -maxAngleDelta ... maxAngleDelta)).truncatingRemainder(dividingBy: 2 * .pi)
+        var newDirection = self.direction + Ant.randomFloats.nextFloat()
+        if newDirection > 2 * .pi {
+            //print("too big: \(self.direction) -> \(newDirection) - correcting to \(newDirection - 2 * .pi) ")
+            newDirection -= 2 * .pi
+        }
+        // if newDirection < 0 { newDirection += 2 * .pi }
         assert(!newDirection.isNaN)
         return newDirection
     }
@@ -68,7 +75,7 @@ class Ant : SKSpriteNode {
     
     private func turn() {
         self.direction = self.nextDirection()
-        self.run(SKAction.rotate(toAngle: (.pi * 1.5) + self.direction, duration: 0.0))
+        self.run(SKAction.rotate(toAngle: (.pi * 1.5) + self.direction, duration: 0.1))
     }
     
     func move() {
