@@ -8,7 +8,6 @@
 import SpriteKit
 
 
-
 class Ant : SKSpriteNode {
     
     static var randomFloats = NormalDistribution(mean: 0.0, deviation: 0.1)
@@ -34,14 +33,11 @@ class Ant : SKSpriteNode {
                                             y: CGFloat.random(in: 0...screenSize.height))
         self.direction = direction ?? CGFloat.random(in: -.pi ... .pi)
         self.speed = 0.5
- 
+        self.name = (color == .red) ? "red" : "black"
         self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
-        self.physicsBody?.friction = 100.0
-        self.physicsBody!.linearDamping = CGFloat(10)
-        self.physicsBody!.angularDamping = CGFloat(5.0)
         self.physicsBody!.isDynamic = true
-        self.physicsBody!.mass = Ant.defaultMass
-
+        self.physicsBody!.contactTestBitMask = self.physicsBody!.collisionBitMask
+        
         self.run(SKAction.rotate(toAngle: self.direction, duration: 0.0))
     }
     
@@ -57,10 +53,10 @@ class Ant : SKSpriteNode {
     
     func nextDirection() -> CGFloat {
         var newDirection = self.direction + Ant.randomFloats.nextFloat()
-        assert(newDirection != CGFloat.infinity)
-        assert(!newDirection.isNaN)
         if newDirection < 0       { newDirection += 2 * .pi }
         if newDirection > 2 * .pi { newDirection -= 2 * .pi }
+        assert(newDirection != CGFloat.infinity)
+        assert(!newDirection.isNaN)
         return newDirection
     }
     
