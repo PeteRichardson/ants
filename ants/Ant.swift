@@ -10,6 +10,7 @@ import SpriteKit
 
 class Ant : SKSpriteNode {
     
+    static var antCount = 0;
     static var randomFloats = NormalDistribution(mean: 0.0, deviation: 0.1)
 
     static let defaultColor = SKColor.black
@@ -19,6 +20,8 @@ class Ant : SKSpriteNode {
     
     var direction : CGFloat = Ant.defaultDirection
     let moveSpeed = 1.0
+    var sizeChanged : Bool = false
+    let id = antCount
 
     init(texture: SKTexture? = nil,
          color: SKColor? =  Ant.defaultColor,
@@ -29,15 +32,21 @@ class Ant : SKSpriteNode {
         super.init(texture: Ant.loadTextureForColor(color!),
                    color: color ?? Ant.defaultColor,
                    size: size ?? Ant.defaultSize)
+        Ant.antCount += 1
         self.position = position ?? CGPoint(x: CGFloat.random(in: 0...screenSize.width),
                                             y: CGFloat.random(in: 0...screenSize.height))
         self.direction = direction ?? CGFloat.random(in: -.pi ... .pi)
         self.speed = 0.5
         self.name = (color == .red) ? "red" : "black"
-        self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
+        let physRect = CGSize(width: self.size.width * 0.7, height: self.size.height * 0.7)
+        self.physicsBody = SKPhysicsBody(rectangleOf: physRect)
         self.physicsBody!.isDynamic = true
         self.physicsBody!.contactTestBitMask = self.physicsBody!.collisionBitMask
         
+        self.color = SKColor.yellow
+        self.colorBlendFactor = 0.5
+        
+            // self.run(SKAction.playSoundFileNamed("bite.m4a", waitForCompletion: false))
         self.run(SKAction.rotate(toAngle: self.direction, duration: 0.0))
     }
     
@@ -79,5 +88,12 @@ class Ant : SKSpriteNode {
     func update() {
         turn()
         move()
+        if self.sizeChanged {
+            self.run(SKAction.playSoundFileNamed("bite.m4a", waitForCompletion: false))
+
+            self.size.width *= 1.1
+            self.size.height *= 1.1
+            self.sizeChanged = false
+        }
     }
 }

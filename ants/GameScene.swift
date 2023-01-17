@@ -13,13 +13,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let numAnts = 200
         for i in 1...numAnts {
-            let s = Int.random(in: 13...21)
+            let s : Int = Int.random(in: 13...21)
             let color : SKColor = (i % 2) != 0 ? .red : .black
             let position = CGPoint(x: CGFloat.random(in: 0...screenSize.width),
                                    y: CGFloat.random(in: 0...screenSize.height))
             
             let ant = Ant(color: color,
-                          size: CGSize(width: s, height: s),
+                          size: CGSize(width: s, height: Int(Double(s) * 1.34)),
                           position: position)
             
             addChild(ant)
@@ -46,20 +46,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if let a1 = ant1 as? Ant,
            let a2 = ant2 as? Ant  {
             if a1.size.width > a2.size.width {
-                //print("\(a1.name!) eats \(a2.name!)!")
-                a1.size.width += a2.size.width / 4
-                a1.size.height += a2.size.height / 4
+                //print("\(a1.id) [\(a1.name!)] eats \(a2.id) [\(a2.name!)]!  (ants remaining = \(Ant.antCount)")
+                a1.sizeChanged = true
                 destroy(ant: ant2)
             } else if a2.size.width > a1.size.width {
-                //print("\(a2.name!) eats \(a1.name!)!")
-                a2.size.width += a1.size.width / 4
-                a2.size.height += a1.size.height / 4
+               // print("\(a2.id) [\(a2.name!)] eats \(a1.id) [\(a1.name!)]!  (ants remaining = \(Ant.antCount)")
+                a2.sizeChanged = true
                 destroy(ant: ant1)
             }
         }
     }
 
     func destroy(ant: SKNode) {
+        Ant.antCount -= 1
         ant.removeFromParent()
     }
 }
