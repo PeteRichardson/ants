@@ -29,7 +29,7 @@ class Ant : SKSpriteNode {
          position: CGPoint? = nil,
          direction: CGFloat? = nil) {
  
-        super.init(texture: Ant.loadTextureForColor(color!),
+        super.init(texture: SKTexture.init(imageNamed: "ant"),
                    color: color ?? Ant.defaultColor,
                    size: size ?? Ant.defaultSize)
         Ant.antCount += 1
@@ -43,8 +43,7 @@ class Ant : SKSpriteNode {
         self.physicsBody!.isDynamic = true
         self.physicsBody!.contactTestBitMask = self.physicsBody!.collisionBitMask
         
-        self.color = SKColor.yellow
-        self.colorBlendFactor = 0.5
+        self.colorBlendFactor = 1.0  // Needed to apply .color to texture
         
             // self.run(SKAction.playSoundFileNamed("bite.m4a", waitForCompletion: false))
         self.run(SKAction.rotate(toAngle: self.direction, duration: 0.0))
@@ -53,11 +52,6 @@ class Ant : SKSpriteNode {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         fatalError("SKSpriteNode.init?() was called but it's not implemented!")
-    }
-    
-    private static func loadTextureForColor(_ color: SKColor) -> SKTexture {
-        let textureFileName = (color == .red) ? "redant" : "blackant"
-        return SKTexture.init(imageNamed: textureFileName)
     }
     
     func nextDirection() -> CGFloat {
