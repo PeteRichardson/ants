@@ -15,6 +15,7 @@
 		C11FED572971D63D00E42166 /* Ant.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11FED562971D63D00E42166 /* Ant.swift */; };
 		C13749162975E44E00268C54 /* NormalDistribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13749152975E44E00268C54 /* NormalDistribution.swift */; };
 		C13749192977519E00268C54 /* bite.m4a in Resources */ = {isa = PBXBuildFile; fileRef = C13749182977519E00268C54 /* bite.m4a */; };
+		C17A6CE32979AD9B00E43621 /* RandomAnt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A6CE22979AD9B00E43621 /* RandomAnt.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		C11FED562971D63D00E42166 /* Ant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Ant.swift; path = ants/Ant.swift; sourceTree = SOURCE_ROOT; };
 		C13749152975E44E00268C54 /* NormalDistribution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalDistribution.swift; sourceTree = "<group>"; };
 		C13749182977519E00268C54 /* bite.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = bite.m4a; sourceTree = "<group>"; };
+		C17A6CE22979AD9B00E43621 /* RandomAnt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomAnt.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +64,7 @@
 			children = (
 				C13749172977518500268C54 /* sounds */,
 				C11FED562971D63D00E42166 /* Ant.swift */,
+				C17A6CE22979AD9B00E43621 /* RandomAnt.swift */,
 				C11FED45297106B300E42166 /* antsApp.swift */,
 				C11FED47297106B300E42166 /* ContentView.swift */,
 				C11FED542971083700E42166 /* GameScene.swift */,
@@ -168,6 +171,7 @@
 				C11FED48297106B300E42166 /* ContentView.swift in Sources */,
 				C11FED46297106B300E42166 /* antsApp.swift in Sources */,
 				C11FED572971D63D00E42166 /* Ant.swift in Sources */,
+				C17A6CE32979AD9B00E43621 /* RandomAnt.swift in Sources */,
 				C13749162975E44E00268C54 /* NormalDistribution.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
