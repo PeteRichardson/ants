@@ -8,6 +8,7 @@
 import SpriteKit
 
 
+
 class Ant : SKSpriteNode {
     
     static var antCount = 0;
@@ -16,6 +17,7 @@ class Ant : SKSpriteNode {
     static let defaultSize = CGSize(width: 15, height: 15)
     static let defaultDirection = 0.0
     static let defaultMass : CGFloat = 1.0
+    let genes = AntGenes()
     
     var direction : CGFloat = Ant.defaultDirection
     let moveSpeed = 2.0

@@ -17,6 +17,7 @@
 		C13749192977519E00268C54 /* bite.m4a in Resources */ = {isa = PBXBuildFile; fileRef = C13749182977519E00268C54 /* bite.m4a */; };
 		C17A6CE32979AD9B00E43621 /* RandomAnt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A6CE22979AD9B00E43621 /* RandomAnt.swift */; };
 		C1B388A1297B0E7F0031AB1B /* Colony.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B388A0297B0E7F0031AB1B /* Colony.swift */; };
+		C1B388A3297B31E10031AB1B /* AntGene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B388A2297B31E10031AB1B /* AntGene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		C13749182977519E00268C54 /* bite.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = bite.m4a; sourceTree = "<group>"; };
 		C17A6CE22979AD9B00E43621 /* RandomAnt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomAnt.swift; sourceTree = "<group>"; };
 		C1B388A0297B0E7F0031AB1B /* Colony.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colony.swift; sourceTree = "<group>"; };
+		C1B388A2297B31E10031AB1B /* AntGene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntGene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +77,7 @@
 				C11FED4B297106B400E42166 /* Preview Content */,
 				C13749152975E44E00268C54 /* NormalDistribution.swift */,
 				C1B388A0297B0E7F0031AB1B /* Colony.swift */,
+				C1B388A2297B31E10031AB1B /* AntGene.swift */,
 			);
 			path = ants;
 			sourceTree = "<group>";
@@ -172,6 +175,7 @@
 			files = (
 				C11FED552971083700E42166 /* GameScene.swift in Sources */,
 				C11FED48297106B300E42166 /* ContentView.swift in Sources */,
+				C1B388A3297B31E10031AB1B /* AntGene.swift in Sources */,
 				C11FED46297106B300E42166 /* antsApp.swift in Sources */,
 				C11FED572971D63D00E42166 /* Ant.swift in Sources */,
 				C17A6CE32979AD9B00E43621 /* RandomAnt.swift in Sources */,
