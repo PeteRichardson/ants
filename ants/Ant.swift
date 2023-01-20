@@ -34,13 +34,11 @@ class Ant : SKSpriteNode {
                    color: color ?? Ant.defaultColor,
                    size: size ?? Ant.defaultSize)
         Ant.antCount += 1
-//        self.id = Ant.antCount
         self.position = position ?? CGPoint(x: CGFloat.random(in: 0...screenSize.width),
                                             y: CGFloat.random(in: 0...screenSize.height))
         self.direction = direction ?? CGFloat.random(in: -.pi ... .pi)
         self.speed = 0.5
-        let idStr = String(format: "%03d", self.id)
-        self.name = "\((color == .red) ? "Red__" : "Black")_\(idStr)"
+        self.name = String(format: "%03d", self.id)
         let physRect = CGSize(width: self.size.width * 0.7, height: self.size.height * 0.7)
         self.physicsBody = SKPhysicsBody(rectangleOf: physRect)
         self.physicsBody!.isDynamic = true
@@ -56,7 +54,7 @@ class Ant : SKSpriteNode {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        fatalError("SKSpriteNode.init?() was called but it's not implemented!")
+        fatalError("Ant.init?(coder:) was called but it's not implemented!")
     }
     
     // base Ants don't turn, move or grow
@@ -81,7 +79,7 @@ class Ant : SKSpriteNode {
         self.position = self.nextPosition()
     }
     
-    func update() {
+    func update(_ currentTime: TimeInterval) {
         turn()
         move()
         grow()
@@ -117,7 +115,7 @@ class Ant : SKSpriteNode {
     }
     
     override var description : String {
-        let sizeStr = String(format: "%.1f", self.size.width)
+        let sizeStr = String(format: "%3.0f", self.size.width)
        return "\(self.name!) (\(sizeStr))"
     }
 }
