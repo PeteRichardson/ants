@@ -13,8 +13,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let redColony = Colony(name: "R", color: .red)
         addChild(redColony)
-        let blackColony = Colony(name: "G", color: .green)
+
+        let blackColony = Colony(name: "B", color: .black)
         addChild(blackColony)
+        let greenColony = Colony(name: "G", color: .green)
+        addChild(greenColony)
     }
     
     override func update(_ currentTime: TimeInterval) {

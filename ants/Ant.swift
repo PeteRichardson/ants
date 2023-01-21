@@ -17,7 +17,7 @@ class Ant : SKSpriteNode {
     static let defaultSize = CGSize(width: 15, height: 15)
     static let defaultDirection = 0.0
     static let defaultMass : CGFloat = 1.0
-    let genes = AntGenes()
+    var genes : AntGenes = AntGenes()
     
     var direction : CGFloat = Ant.defaultDirection
     let moveSpeed = 2.0
@@ -34,7 +34,6 @@ class Ant : SKSpriteNode {
          size: CGSize? = Ant.defaultSize,
          position: CGPoint? = nil,
          direction: CGFloat? = nil) {
- 
         super.init(texture: SKTexture.init(imageNamed: "ant"),
                    color: color ?? Ant.defaultColor,
                    size: size ?? Ant.defaultSize)
@@ -60,6 +59,12 @@ class Ant : SKSpriteNode {
         self.run(SKAction.rotate(toAngle: self.direction, duration: 0.0))
     }
     
+    convenience init(parent1: Ant, parent2: Ant) {
+        self.init()
+        self.genes = AntGenes(parent1: parent1, parent2: parent2)
+    }
+    
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         fatalError("Ant.init?(coder:) was called but it's not implemented!")
@@ -68,8 +73,7 @@ class Ant : SKSpriteNode {
     // base Ants don't turn, move or grow
     func nextDirection() -> CGFloat { return self.direction }
     func nextPosition() -> CGPoint { return self.position }
-    
-    
+        
     func turn() {
         self.direction = self.nextDirection()
         self.run(SKAction.rotate(toAngle: (.pi * 1.5) + self.direction, duration: 0.01, shortestUnitArc: true))

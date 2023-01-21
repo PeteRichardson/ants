@@ -1,6 +1,6 @@
 import CoreGraphics
 
-struct AntGenes {
+struct AntGenes : CustomStringConvertible {
     // genes are used to scale the default ranges of ant characteristics at birth
     //
     // they are CGFloats in the range 0.0-1.0
@@ -20,28 +20,37 @@ struct AntGenes {
 
     let meanBirthSize : CGFloat         // affects how big an ant is at birth
     let meanBirthHealth : CGFloat       // affects how much health an ant has at birth
-    let meanRecoveryRate : CGFloat      // affects how quickly an ant recovers from damage
     let meanBiteStrength : CGFloat      // affects how much damage an ant can inflict
+    let meanArmorClass : CGFloat        // affects how much damage an ant takes for a given hit
+    let meanRecoveryRate : CGFloat      // affects how quickly an ant recovers from damage
     let meanSpeed : CGFloat             // affects how fast an ant can move
     let meanVisionStrength : CGFloat    // affects how far an ant can see
-    let meanCarryCapacity : CGFloat          // affects how much an ant can carry
+    let meanCarryCapacity : CGFloat     // affects how much an ant can carry
     
-    private static func combine(_ mg : CGFloat, _ fg : CGFloat) -> CGFloat {
+    static var randomGenes = NormalDistribution(mean: 0.5, deviation: 0.1)
+    static var randomFloats = NormalDistribution(mean: 0.0, deviation: 0.1)
+
+    static func combine(_ mg : CGFloat, _ fg : CGFloat) -> CGFloat {
         // average of mothers and fathers gene + small random factor?
         // TODO: random factor here should all be from a normal distribution
-         return (mg + fg) / 2.0 + CGFloat.random(in: -0.1...0.1)
+        let base = Int.random(in: 0...1) == 0 ? mg : fg
+        var result = base + AntGenes.randomFloats.nextFloat()
+        if result > 1.0 { result = 1.0 }
+        if result < 0.0 { result = 0.0 }
+        return result
     }
     
     // Create a random set of genes
     // TODO:  these random factors should all be from a normal distribution
     init() {
-        self.meanBirthSize = CGFloat.random(in: 0.0...1.0)
-        self.meanBirthHealth = CGFloat.random(in: 0.0...1.0)
-        self.meanBiteStrength = CGFloat.random(in: 0.0...1.0)
-        self.meanRecoveryRate = CGFloat.random(in: 0.0...1.0)
-        self.meanSpeed = CGFloat.random(in: 0.0...1.0)
-        self.meanVisionStrength = CGFloat.random(in: 0.0...1.0)
-        self.meanCarryCapacity = CGFloat.random(in: 0.0...1.0)
+        self.meanBirthSize = AntGenes.randomGenes.nextFloat()
+        self.meanBirthHealth = AntGenes.randomGenes.nextFloat()
+        self.meanBiteStrength = AntGenes.randomGenes.nextFloat()
+        self.meanArmorClass = AntGenes.randomGenes.nextFloat()
+        self.meanRecoveryRate = AntGenes.randomGenes.nextFloat()
+        self.meanSpeed = AntGenes.randomGenes.nextFloat()
+        self.meanVisionStrength = AntGenes.randomGenes.nextFloat()
+        self.meanCarryCapacity = AntGenes.randomGenes.nextFloat()
     }
     
     // Create a new set of genes based on two parent ants
@@ -51,9 +60,25 @@ struct AntGenes {
         self.meanBirthSize = AntGenes.combine(genes1.meanBirthSize, genes2.meanBirthSize)
         self.meanBirthHealth = AntGenes.combine(genes1.meanBirthHealth, genes2.meanBirthHealth)
         self.meanBiteStrength = AntGenes.combine(genes1.meanBiteStrength, genes2.meanBiteStrength)
+        self.meanArmorClass = AntGenes.combine(genes1.meanArmorClass, genes2.meanArmorClass)
         self.meanRecoveryRate = AntGenes.combine(genes1.meanRecoveryRate, genes2.meanRecoveryRate)
         self.meanSpeed = AntGenes.combine(genes1.meanSpeed, genes2.meanSpeed)
         self.meanVisionStrength = AntGenes.combine(genes1.meanVisionStrength, genes2.meanVisionStrength)
         self.meanCarryCapacity = AntGenes.combine(genes1.meanCarryCapacity, genes2.meanCarryCapacity)
+    }
+    
+    var description: String {
+        let formatstr = "%.2f"
+        let mSizeStr = String(format: formatstr, self.meanBirthSize)
+        let mHealthStr = String(format: formatstr, self.meanBirthHealth)
+        let mBiteStr = String(format: formatstr, self.meanBiteStrength)
+        let mArmorStr = String(format: formatstr, self.meanArmorClass)
+        let mRecoveryStr = String(format: formatstr, self.meanRecoveryRate)
+        let mSpeedStr = String(format: formatstr, self.meanSpeed)
+        let mVisionStr = String(format: formatstr, self.meanVisionStrength)
+        let mCapacityStr = String(format: formatstr, self.meanCarryCapacity)
+        return "size: \(mSizeStr), health: \(mHealthStr), bite: \(mBiteStr), armor: \(mArmorStr), " +
+            "recovery: \(mRecoveryStr), speed: \(mSpeedStr), vision: \(mVisionStr), capacity: \(mCapacityStr)"
+
     }
 }

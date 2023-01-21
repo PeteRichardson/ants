@@ -15,10 +15,26 @@
 		C11FED572971D63D00E42166 /* Ant.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11FED562971D63D00E42166 /* Ant.swift */; };
 		C13749162975E44E00268C54 /* NormalDistribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13749152975E44E00268C54 /* NormalDistribution.swift */; };
 		C13749192977519E00268C54 /* bite.m4a in Resources */ = {isa = PBXBuildFile; fileRef = C13749182977519E00268C54 /* bite.m4a */; };
+		C14C5032297B58450028E546 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14C5031297B58450028E546 /* main.swift */; };
+		C14C5037297B58760028E546 /* Ant.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11FED562971D63D00E42166 /* Ant.swift */; };
+		C14C5038297B587C0028E546 /* AntGene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B388A2297B31E10031AB1B /* AntGene.swift */; };
+		C14C503A297B63E80028E546 /* NormalDistribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13749152975E44E00268C54 /* NormalDistribution.swift */; };
 		C17A6CE32979AD9B00E43621 /* RandomAnt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A6CE22979AD9B00E43621 /* RandomAnt.swift */; };
 		C1B388A1297B0E7F0031AB1B /* Colony.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B388A0297B0E7F0031AB1B /* Colony.swift */; };
 		C1B388A3297B31E10031AB1B /* AntGene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B388A2297B31E10031AB1B /* AntGene.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C14C502D297B58450028E546 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		C11FED42297106B300E42166 /* ants.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ants.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -31,6 +47,8 @@
 		C11FED562971D63D00E42166 /* Ant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Ant.swift; path = ants/Ant.swift; sourceTree = SOURCE_ROOT; };
 		C13749152975E44E00268C54 /* NormalDistribution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalDistribution.swift; sourceTree = "<group>"; };
 		C13749182977519E00268C54 /* bite.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = bite.m4a; sourceTree = "<group>"; };
+		C14C502F297B58450028E546 /* genetester */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = genetester; sourceTree = BUILT_PRODUCTS_DIR; };
+		C14C5031297B58450028E546 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		C17A6CE22979AD9B00E43621 /* RandomAnt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomAnt.swift; sourceTree = "<group>"; };
 		C1B388A0297B0E7F0031AB1B /* Colony.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colony.swift; sourceTree = "<group>"; };
 		C1B388A2297B31E10031AB1B /* AntGene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntGene.swift; sourceTree = "<group>"; };
@@ -44,6 +62,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C14C502C297B58450028E546 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -51,6 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				C11FED44297106B300E42166 /* ants */,
+				C14C5036297B584F0028E546 /* tools */,
 				C11FED43297106B300E42166 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -59,6 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				C11FED42297106B300E42166 /* ants.app */,
+				C14C502F297B58450028E546 /* genetester */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -66,18 +93,18 @@
 		C11FED44297106B300E42166 /* ants */ = {
 			isa = PBXGroup;
 			children = (
-				C13749172977518500268C54 /* sounds */,
-				C11FED562971D63D00E42166 /* Ant.swift */,
-				C17A6CE22979AD9B00E43621 /* RandomAnt.swift */,
 				C11FED45297106B300E42166 /* antsApp.swift */,
 				C11FED47297106B300E42166 /* ContentView.swift */,
 				C11FED542971083700E42166 /* GameScene.swift */,
+				C1B388A0297B0E7F0031AB1B /* Colony.swift */,
+				C11FED562971D63D00E42166 /* Ant.swift */,
+				C1B388A2297B31E10031AB1B /* AntGene.swift */,
+				C17A6CE22979AD9B00E43621 /* RandomAnt.swift */,
+				C13749152975E44E00268C54 /* NormalDistribution.swift */,
 				C11FED49297106B400E42166 /* Assets.xcassets */,
+				C13749172977518500268C54 /* sounds */,
 				C11FED4E297106B400E42166 /* ants.entitlements */,
 				C11FED4B297106B400E42166 /* Preview Content */,
-				C13749152975E44E00268C54 /* NormalDistribution.swift */,
-				C1B388A0297B0E7F0031AB1B /* Colony.swift */,
-				C1B388A2297B31E10031AB1B /* AntGene.swift */,
 			);
 			path = ants;
 			sourceTree = "<group>";
@@ -96,6 +123,22 @@
 				C13749182977519E00268C54 /* bite.m4a */,
 			);
 			path = sounds;
+			sourceTree = "<group>";
+		};
+		C14C5030297B58450028E546 /* genetester */ = {
+			isa = PBXGroup;
+			children = (
+				C14C5031297B58450028E546 /* main.swift */,
+			);
+			path = genetester;
+			sourceTree = "<group>";
+		};
+		C14C5036297B584F0028E546 /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				C14C5030297B58450028E546 /* genetester */,
+			);
+			path = tools;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -120,6 +163,23 @@
 			productReference = C11FED42297106B300E42166 /* ants.app */;
 			productType = "com.apple.product-type.application";
 		};
+		C14C502E297B58450028E546 /* genetester */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C14C5035297B58450028E546 /* Build configuration list for PBXNativeTarget "genetester" */;
+			buildPhases = (
+				C14C502B297B58450028E546 /* Sources */,
+				C14C502C297B58450028E546 /* Frameworks */,
+				C14C502D297B58450028E546 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = genetester;
+			productName = genetester;
+			productReference = C14C502F297B58450028E546 /* genetester */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -131,6 +191,9 @@
 				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					C11FED41297106B300E42166 = {
+						CreatedOnToolsVersion = 14.2;
+					};
+					C14C502E297B58450028E546 = {
 						CreatedOnToolsVersion = 14.2;
 					};
 				};
@@ -151,6 +214,7 @@
 			projectRoot = "";
 			targets = (
 				C11FED41297106B300E42166 /* ants */,
+				C14C502E297B58450028E546 /* genetester */,
 			);
 		};
 /* End PBXProject section */
@@ -181,6 +245,17 @@
 				C17A6CE32979AD9B00E43621 /* RandomAnt.swift in Sources */,
 				C1B388A1297B0E7F0031AB1B /* Colony.swift in Sources */,
 				C13749162975E44E00268C54 /* NormalDistribution.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C14C502B297B58450028E546 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C14C503A297B63E80028E546 /* NormalDistribution.swift in Sources */,
+				C14C5038297B587C0028E546 /* AntGene.swift in Sources */,
+				C14C5032297B58450028E546 /* main.swift in Sources */,
+				C14C5037297B58760028E546 /* Ant.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,6 +429,28 @@
 			};
 			name = Release;
 		};
+		C14C5033297B58450028E546 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RFDDK5QUG8;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C14C5034297B58450028E546 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RFDDK5QUG8;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -371,6 +468,15 @@
 			buildConfigurations = (
 				C11FED52297106B400E42166 /* Debug */,
 				C11FED53297106B400E42166 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C14C5035297B58450028E546 /* Build configuration list for PBXNativeTarget "genetester" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C14C5033297B58450028E546 /* Debug */,
+				C14C5034297B58450028E546 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
