@@ -11,9 +11,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         physicsWorld.gravity = CGVector (dx: 0.0, dy: 0.0)
         physicsWorld.contactDelegate = self
         
-        let redColony = Colony(name: "Red__", color: .red)
+        let redColony = Colony(name: "R", color: .red)
         addChild(redColony)
-        let blackColony = Colony(name: "Green", color: .green)
+        let blackColony = Colony(name: "G", color: .green)
         addChild(blackColony)
     }
     

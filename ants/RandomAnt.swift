@@ -27,8 +27,4 @@ class RandomAnt: Ant {
         return CGPoint(x: newX, y: newY)
     }
     
-    override func nextSize() -> CGSize {
-        return CGSize(width: self.size.width * 1.1, height: self.size.height * 1.1)
-    }
-
 }

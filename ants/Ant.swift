@@ -19,7 +19,10 @@ class Ant : SKSpriteNode {
     
     var direction : CGFloat = Ant.defaultDirection
     let moveSpeed = 1.0
-    var sizeChangedBy : CGSize? = nil
+    var health : CGFloat = 0.0
+    var maxHealth : CGFloat = 0.0
+    var attack : CGFloat = 0.0
+
     let id = antCount
     var birthSound : String?
     var eatSound : String? = "bite.m4a"
@@ -38,6 +41,9 @@ class Ant : SKSpriteNode {
                                             y: CGFloat.random(in: 0...screenSize.height))
         self.direction = direction ?? CGFloat.random(in: -.pi ... .pi)
         self.speed = 0.5
+        self.health = CGFloat.random(in: 2...5) * self.size.width
+        self.maxHealth = self.health
+        self.attack = self.size.width + CGFloat.random(in: -5.0...5.0)
         self.name = String(format: "%03d", self.id)
         let physRect = CGSize(width: self.size.width * 0.7, height: self.size.height * 0.7)
         self.physicsBody = SKPhysicsBody(rectangleOf: physRect)
@@ -60,15 +66,7 @@ class Ant : SKSpriteNode {
     // base Ants don't turn, move or grow
     func nextDirection() -> CGFloat { return self.direction }
     func nextPosition() -> CGPoint { return self.position }
-    func nextSize() -> CGSize { return self.size }
     
-    func grow() {
-        if let delta = self.sizeChangedBy {
-            self.size.width += delta.width / 5
-            self.size.height += delta.height / 5
-            self.sizeChangedBy = nil
-        }
-    }
     
     func turn() {
         self.direction = self.nextDirection()
@@ -80,14 +78,14 @@ class Ant : SKSpriteNode {
     }
     
     func update(_ currentTime: TimeInterval) {
+        self.alpha = self.health / self.maxHealth
         turn()
         move()
-        grow()
     }
     
     func destroy() {
         Ant.antCount -= 1
-        print("(ants remaining = \(Ant.antCount))")
+        print("\tants remaining = \(Ant.antCount)")
         self.removeFromParent()
     }
     
@@ -97,12 +95,20 @@ class Ant : SKSpriteNode {
     
     func fight(_ otherAnt: Ant) {
         let (bigger, smaller) = self.size.width > otherAnt.size.width ? (self, otherAnt) : (otherAnt, self)
-        print(" \(bigger) eats \(smaller)! ", terminator: "")
-        if let s = self.eatSound {
+         if let s = self.eatSound {
             self.run(SKAction.playSoundFileNamed(s, waitForCompletion: false))
         }
-        bigger.sizeChangedBy = smaller.size
-        smaller.destroy()
+        bigger.health -= smaller.attack
+         smaller.health -= bigger.attack
+        print(" \(smaller) and \(bigger) trade blows! \(smaller) loses \(bigger.attack).  \(bigger) loses \(smaller.attack)! ")
+        if smaller.health <= 0 {
+            print("\t\(smaller) dies!")
+            smaller.destroy()
+        }
+        if bigger.health <= 0 {
+            print("\t\(bigger) dies!")
+            bigger.destroy()
+        }
     }
     
     func reactToCollision(body: SKNode?) {
@@ -115,7 +121,7 @@ class Ant : SKSpriteNode {
     }
     
     override var description : String {
-        let sizeStr = String(format: "%3.0f", self.size.width)
-       return "\(self.name!) (\(sizeStr))"
+        let healthStr = String(format: "%3.0f", self.health)
+       return "\(self.name!)[\(healthStr)]"
     }
 }

@@ -20,7 +20,7 @@ class Colony: SKSpriteNode {
         self.setScale(0.5)
         self.alpha = 0.5
         self.name = name
-        self.colorBlendFactor = 0.5
+        self.colorBlendFactor = 1.0
         
         // TODO:  spread this out over time.
         for _ in 1...population! {
