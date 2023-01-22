@@ -51,7 +51,7 @@ class Colony: SKSpriteNode {
         let ant = RandomAnt(color: color,
                       size: CGSize(width: s, height: Int(Double(s) * 1.34)),
                       position: position)
-        ant.name = self.name! + "_\(ant.name!)"
+        ant.name = self.name! + "\(ant.name!)"
         addChild(ant)
     }
 

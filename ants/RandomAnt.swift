@@ -13,6 +13,9 @@ class RandomAnt: Ant {
     
     override func nextDirection() -> CGFloat {
         var newDirection = self.direction + RandomAnt.randomFloats.nextFloat()
+        if newDirection == CGFloat.infinity {
+            newDirection = self.direction
+        }
         if newDirection < 0       { newDirection += 2 * .pi }
         if newDirection > 2 * .pi { newDirection -= 2 * .pi }
         assert(newDirection != CGFloat.infinity)

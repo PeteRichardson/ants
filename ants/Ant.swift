@@ -18,7 +18,7 @@ class Ant : SKSpriteNode {
     static let defaultMass : CGFloat = 1.0
     
     var direction : CGFloat = Ant.defaultDirection
-    let moveSpeed = 1.0
+    let moveSpeed = 2.0
     var health : CGFloat = 0.0
     var maxHealth : CGFloat = 0.0
     var attack : CGFloat = 0.0
@@ -41,9 +41,9 @@ class Ant : SKSpriteNode {
                                             y: CGFloat.random(in: 0...screenSize.height))
         self.direction = direction ?? CGFloat.random(in: -.pi ... .pi)
         self.speed = 0.5
-        self.health = CGFloat.random(in: 2...5) * self.size.width
+        self.health = CGFloat.random(in: 2...3) * self.size.width
         self.maxHealth = self.health
-        self.attack = self.size.width + CGFloat.random(in: -5.0...5.0)
+        self.attack = CGFloat(Int(self.size.width) + Int.random(in: -5...5))
         self.name = String(format: "%03d", self.id)
         let physRect = CGSize(width: self.size.width * 0.7, height: self.size.height * 0.7)
         self.physicsBody = SKPhysicsBody(rectangleOf: physRect)
@@ -85,7 +85,6 @@ class Ant : SKSpriteNode {
     
     func destroy() {
         Ant.antCount -= 1
-        print("\tants remaining = \(Ant.antCount)")
         self.removeFromParent()
     }
     
@@ -98,15 +97,15 @@ class Ant : SKSpriteNode {
          if let s = self.eatSound {
             self.run(SKAction.playSoundFileNamed(s, waitForCompletion: false))
         }
+        print(" \(smaller) vs \(bigger):  \(smaller.name!) -\(bigger.attack) | \(bigger.name!) -\(smaller.attack) ")
         bigger.health -= smaller.attack
-         smaller.health -= bigger.attack
-        print(" \(smaller) and \(bigger) trade blows! \(smaller) loses \(bigger.attack).  \(bigger) loses \(smaller.attack)! ")
-        if smaller.health <= 0 {
-            print("\t\(smaller) dies!")
+        smaller.health -= bigger.attack
+         if smaller.health <= 0 {
+            print("\t\(smaller) dies!  ants remaining = \(Ant.antCount)")
             smaller.destroy()
         }
         if bigger.health <= 0 {
-            print("\t\(bigger) dies!")
+            print("\t\(bigger) dies!  ants remaining = \(Ant.antCount)")
             bigger.destroy()
         }
     }
