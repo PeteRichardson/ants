@@ -20,6 +20,13 @@
 		C14C5038297B587C0028E546 /* AntGene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B388A2297B31E10031AB1B /* AntGene.swift */; };
 		C14C503A297B63E80028E546 /* NormalDistribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13749152975E44E00268C54 /* NormalDistribution.swift */; };
 		C17A6CE32979AD9B00E43621 /* RandomAnt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A6CE22979AD9B00E43621 /* RandomAnt.swift */; };
+		C18FF17A298465F800447C6C /* simpleAntsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18FF179298465F800447C6C /* simpleAntsApp.swift */; };
+		C18FF17C298465F800447C6C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18FF17B298465F800447C6C /* ContentView.swift */; };
+		C18FF17E298465F900447C6C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C18FF17D298465F900447C6C /* Assets.xcassets */; };
+		C18FF181298465F900447C6C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C18FF180298465F900447C6C /* Preview Assets.xcassets */; };
+		C18FF187298466FE00447C6C /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18FF186298466FE00447C6C /* GameScene.swift */; };
+		C18FF189298467FD00447C6C /* ControlPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18FF188298467FD00447C6C /* ControlPanelView.swift */; };
+		C18FF18D298475E100447C6C /* MiniAnt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18FF18C298475E100447C6C /* MiniAnt.swift */; };
 		C1B388A1297B0E7F0031AB1B /* Colony.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B388A0297B0E7F0031AB1B /* Colony.swift */; };
 		C1B388A3297B31E10031AB1B /* AntGene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B388A2297B31E10031AB1B /* AntGene.swift */; };
 /* End PBXBuildFile section */
@@ -50,6 +57,15 @@
 		C14C502F297B58450028E546 /* genetester */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = genetester; sourceTree = BUILT_PRODUCTS_DIR; };
 		C14C5031297B58450028E546 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		C17A6CE22979AD9B00E43621 /* RandomAnt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomAnt.swift; sourceTree = "<group>"; };
+		C18FF177298465F800447C6C /* simpleAnts.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = simpleAnts.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C18FF179298465F800447C6C /* simpleAntsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = simpleAntsApp.swift; sourceTree = "<group>"; };
+		C18FF17B298465F800447C6C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C18FF17D298465F900447C6C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C18FF180298465F900447C6C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		C18FF182298465F900447C6C /* simpleAnts.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = simpleAnts.entitlements; sourceTree = "<group>"; };
+		C18FF186298466FE00447C6C /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
+		C18FF188298467FD00447C6C /* ControlPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlPanelView.swift; sourceTree = "<group>"; };
+		C18FF18C298475E100447C6C /* MiniAnt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniAnt.swift; sourceTree = "<group>"; };
 		C1B388A0297B0E7F0031AB1B /* Colony.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colony.swift; sourceTree = "<group>"; };
 		C1B388A2297B31E10031AB1B /* AntGene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntGene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -69,6 +85,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C18FF174298465F800447C6C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -77,6 +100,7 @@
 			children = (
 				C11FED44297106B300E42166 /* ants */,
 				C14C5036297B584F0028E546 /* tools */,
+				C18FF178298465F800447C6C /* simpleAnts */,
 				C11FED43297106B300E42166 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -86,6 +110,7 @@
 			children = (
 				C11FED42297106B300E42166 /* ants.app */,
 				C14C502F297B58450028E546 /* genetester */,
+				C18FF177298465F800447C6C /* simpleAnts.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -141,6 +166,29 @@
 			path = tools;
 			sourceTree = "<group>";
 		};
+		C18FF178298465F800447C6C /* simpleAnts */ = {
+			isa = PBXGroup;
+			children = (
+				C18FF179298465F800447C6C /* simpleAntsApp.swift */,
+				C18FF17B298465F800447C6C /* ContentView.swift */,
+				C18FF186298466FE00447C6C /* GameScene.swift */,
+				C18FF17D298465F900447C6C /* Assets.xcassets */,
+				C18FF182298465F900447C6C /* simpleAnts.entitlements */,
+				C18FF17F298465F900447C6C /* Preview Content */,
+				C18FF188298467FD00447C6C /* ControlPanelView.swift */,
+				C18FF18C298475E100447C6C /* MiniAnt.swift */,
+			);
+			path = simpleAnts;
+			sourceTree = "<group>";
+		};
+		C18FF17F298465F900447C6C /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				C18FF180298465F900447C6C /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -180,6 +228,23 @@
 			productReference = C14C502F297B58450028E546 /* genetester */;
 			productType = "com.apple.product-type.tool";
 		};
+		C18FF176298465F800447C6C /* simpleAnts */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C18FF185298465F900447C6C /* Build configuration list for PBXNativeTarget "simpleAnts" */;
+			buildPhases = (
+				C18FF173298465F800447C6C /* Sources */,
+				C18FF174298465F800447C6C /* Frameworks */,
+				C18FF175298465F800447C6C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = simpleAnts;
+			productName = simpleAnts;
+			productReference = C18FF177298465F800447C6C /* simpleAnts.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -194,6 +259,9 @@
 						CreatedOnToolsVersion = 14.2;
 					};
 					C14C502E297B58450028E546 = {
+						CreatedOnToolsVersion = 14.2;
+					};
+					C18FF176298465F800447C6C = {
 						CreatedOnToolsVersion = 14.2;
 					};
 				};
@@ -215,6 +283,7 @@
 			targets = (
 				C11FED41297106B300E42166 /* ants */,
 				C14C502E297B58450028E546 /* genetester */,
+				C18FF176298465F800447C6C /* simpleAnts */,
 			);
 		};
 /* End PBXProject section */
@@ -227,6 +296,15 @@
 				C11FED4D297106B400E42166 /* Preview Assets.xcassets in Resources */,
 				C13749192977519E00268C54 /* bite.m4a in Resources */,
 				C11FED4A297106B400E42166 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C18FF175298465F800447C6C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C18FF181298465F900447C6C /* Preview Assets.xcassets in Resources */,
+				C18FF17E298465F900447C6C /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,6 +334,18 @@
 				C14C5038297B587C0028E546 /* AntGene.swift in Sources */,
 				C14C5032297B58450028E546 /* main.swift in Sources */,
 				C14C5037297B58760028E546 /* Ant.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C18FF173298465F800447C6C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C18FF187298466FE00447C6C /* GameScene.swift in Sources */,
+				C18FF18D298475E100447C6C /* MiniAnt.swift in Sources */,
+				C18FF189298467FD00447C6C /* ControlPanelView.swift in Sources */,
+				C18FF17C298465F800447C6C /* ContentView.swift in Sources */,
+				C18FF17A298465F800447C6C /* simpleAntsApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -451,6 +541,60 @@
 			};
 			name = Release;
 		};
+		C18FF183298465F900447C6C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = simpleAnts/simpleAnts.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"simpleAnts/Preview Content\"";
+				DEVELOPMENT_TEAM = RFDDK5QUG8;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.peterichardson.simpleAnts;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C18FF184298465F900447C6C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = simpleAnts/simpleAnts.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"simpleAnts/Preview Content\"";
+				DEVELOPMENT_TEAM = RFDDK5QUG8;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.peterichardson.simpleAnts;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -477,6 +621,15 @@
 			buildConfigurations = (
 				C14C5033297B58450028E546 /* Debug */,
 				C14C5034297B58450028E546 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C18FF185298465F900447C6C /* Build configuration list for PBXNativeTarget "simpleAnts" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C18FF183298465F900447C6C /* Debug */,
+				C18FF184298465F900447C6C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

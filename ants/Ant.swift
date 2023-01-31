@@ -12,9 +12,9 @@ import SpriteKit
 class Ant : SKSpriteNode {
     
     static var antCount = 0;
-    
+    static let antTexture = SKTexture(imageNamed: "smallant")
     static let defaultColor = SKColor.black
-    static let defaultSize = CGSize(width: 15, height: 15)
+    static let defaultSize = CGSize(width: 15, height: 10)
     static let defaultDirection = 0.0
     static let defaultMass : CGFloat = 1.0
     var genes : AntGenes = AntGenes()
@@ -34,7 +34,7 @@ class Ant : SKSpriteNode {
          size: CGSize? = Ant.defaultSize,
          position: CGPoint? = nil,
          direction: CGFloat? = nil) {
-        super.init(texture: SKTexture.init(imageNamed: "ant"),
+        super.init(texture: Ant.antTexture,
                    color: color ?? Ant.defaultColor,
                    size: size ?? Ant.defaultSize)
         Ant.antCount += 1
@@ -76,7 +76,7 @@ class Ant : SKSpriteNode {
         
     func turn() {
         self.direction = self.nextDirection()
-        self.run(SKAction.rotate(toAngle: (.pi * 1.5) + self.direction, duration: 0.01, shortestUnitArc: true))
+        self.run(SKAction.rotate(toAngle: self.direction, duration: 0.01, shortestUnitArc: true))
     }
     
     func move() {
