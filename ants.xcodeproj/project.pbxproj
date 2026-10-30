@@ -45,6 +45,8 @@
 		C11FED4E297106B400E42166 /* ants.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ants.entitlements; sourceTree = "<group>"; };
 		C11FED542971083700E42166 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		C11FED562971D63D00E42166 /* Ant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Ant.swift; path = ants/Ant.swift; sourceTree = SOURCE_ROOT; };
+		C12EBE66309416A4008FD822 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		C12EBE68309416D5008FD822 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		C13749152975E44E00268C54 /* NormalDistribution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalDistribution.swift; sourceTree = "<group>"; };
 		C13749182977519E00268C54 /* bite.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = bite.m4a; sourceTree = "<group>"; };
 		C14C502F297B58450028E546 /* genetester */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = genetester; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -75,6 +77,8 @@
 		C11FED39297106B300E42166 = {
 			isa = PBXGroup;
 			children = (
+				C12EBE66309416A4008FD822 /* README.md */,
+				C12EBE68309416D5008FD822 /* LICENSE */,
 				C11FED44297106B300E42166 /* ants */,
 				C14C5036297B584F0028E546 /* tools */,
 				C11FED43297106B300E42166 /* Products */,
