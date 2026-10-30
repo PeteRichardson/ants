@@ -10,7 +10,7 @@ import SpriteKit
 
 
 class Ant : SKSpriteNode {
-    
+
     static var antCount = 0;
     static let antTexture = Ant.outlinedTexture(SKTexture(imageNamed: "smallant"))
     static let defaultColor = SKColor.black
@@ -18,7 +18,7 @@ class Ant : SKSpriteNode {
     static let defaultDirection = 0.0
     static let defaultMass : CGFloat = 1.0
     var genes : AntGenes = AntGenes()
-    
+
     var direction : CGFloat = Ant.defaultDirection
     let moveSpeed = 2.0
     var health : CGFloat = 0.0
@@ -38,8 +38,7 @@ class Ant : SKSpriteNode {
                    color: color ?? Ant.defaultColor,
                    size: size ?? Ant.defaultSize)
         Ant.antCount += 1
-        self.position = position ?? CGPoint(x: CGFloat.random(in: 0...screenSize.width),
-                                            y: CGFloat.random(in: 0...screenSize.height))
+        self.position = position ?? .zero
         self.direction = direction ?? CGFloat.random(in: -.pi ... .pi)
         self.speed = 0.5
         self.health = CGFloat.random(in: 2...3) * self.size.width
@@ -50,21 +49,21 @@ class Ant : SKSpriteNode {
         self.physicsBody = SKPhysicsBody(rectangleOf: physRect)
         self.physicsBody!.isDynamic = true
         self.physicsBody!.contactTestBitMask = self.physicsBody!.collisionBitMask
-        
+
         self.colorBlendFactor = 1.0  // Needed to apply .color to texture
-        
+
         if let s = self.birthSound {
             self.run(SKAction.playSoundFileNamed(s, waitForCompletion: false))
         }
         self.run(SKAction.rotate(toAngle: self.direction, duration: 0.0))
     }
-    
+
     convenience init(parent1: Ant, parent2: Ant) {
         self.init()
         self.genes = AntGenes(parent1: parent1, parent2: parent2)
     }
-    
-    
+
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         fatalError("Ant.init?(coder:) was called but it's not implemented!")
@@ -118,63 +117,67 @@ class Ant : SKSpriteNode {
         result.filteringMode = texture.filteringMode
         return result
     }
-    
+
     // base Ants don't turn, move or grow
     func nextDirection() -> CGFloat { return self.direction }
     func nextPosition() -> CGPoint { return self.position }
-        
+
     func turn() {
         self.direction = self.nextDirection()
         self.run(SKAction.rotate(toAngle: self.direction, duration: 0.01, shortestUnitArc: true))
     }
-    
+
     func move() {
         self.position = self.nextPosition()
     }
-    
+
     func update(_ currentTime: TimeInterval) {
         self.alpha = self.health / self.maxHealth
         turn()
         move()
     }
-    
+
     func destroy() {
         Ant.antCount -= 1
         self.removeFromParent()
     }
-    
+
     func isEnemy(_ otherAnt : Ant) -> Bool {
         return self.color != otherAnt.color
     }
-    
+
     func fight(_ otherAnt: Ant) {
         let (bigger, smaller) = self.size.width > otherAnt.size.width ? (self, otherAnt) : (otherAnt, self)
          if let s = self.eatSound {
             self.run(SKAction.playSoundFileNamed(s, waitForCompletion: false))
         }
-        print(" \(smaller) vs \(bigger):  \(smaller.name!) -\(bigger.attack) | \(bigger.name!) -\(smaller.attack) ")
+        print(" \(smaller.status) vs \(bigger.status):  \(smaller.name!) -\(bigger.attack) | \(bigger.name!) -\(smaller.attack) ")
         bigger.health -= smaller.attack
         smaller.health -= bigger.attack
          if smaller.health <= 0 {
-            print("\t\(smaller) dies!  ants remaining = \(Ant.antCount)")
+            print("\t\(smaller.status) dies!  ants remaining = \(Ant.antCount)")
             smaller.destroy()
         }
         if bigger.health <= 0 {
-            print("\t\(bigger) dies!  ants remaining = \(Ant.antCount)")
+            print("\t\(bigger.status) dies!  ants remaining = \(Ant.antCount)")
             bigger.destroy()
         }
     }
-    
+
     func reactToCollision(body: SKNode?) {
         // only react to ant collisions, for now
         guard let otherAnt = body as? Ant else { return }
-        
+
         if isEnemy(otherAnt) {
             fight(otherAnt)
          }
     }
-    
-    override var description : String {
+
+    /// Name and current health for the fight log, e.g. `R042[ 71]`.
+    ///
+    /// Not an override of `description`: that `NSObject` property is nonisolated, and the
+    /// ant's state is isolated to the main actor.
+    var status: String {
         let healthStr = String(format: "%3.0f", self.health)
        return "\(self.name!)[\(healthStr)]"
     }

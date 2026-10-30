@@ -7,8 +7,6 @@
 
 import Foundation
 
-let screenSize = CGSize(width: 1024, height: 768)
-
 func generation(_ mother: Ant, _ father: Ant) -> Ant {
     print(mother.genes)
     print(father.genes)

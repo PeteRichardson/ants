@@ -1,24 +1,30 @@
 import SpriteKit
 
-class GameScene: SKScene, SKPhysicsContactDelegate {
+// SpriteKit calls the contact delegate on the main thread during physics simulation, so the
+// conformance is isolated to the main actor like the rest of the scene.
+class GameScene: SKScene, @MainActor SKPhysicsContactDelegate {
 
     /// Pale sand. Light and low in saturation, so that red, black, and amber ants all keep
     /// contrast against it without the ground pulling attention from the ants. A darker or
     /// more yellow sand makes amber ants hard to see.
     static let sandColor = SKColor(srgbRed: 228 / 255, green: 218 / 255, blue: 196 / 255, alpha: 1)
 
-    override func didMove(to view: SKView) {
-        physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
-    }
+    private var isSetUp = false
 
-    override func sceneDidLoad() {
+    /// Builds the world the first time the scene is presented. Setup runs here, not in
+    /// `sceneDidLoad`, because the scene's `size` is set by then.
+    override func didMove(to view: SKView) {
+        guard !isSetUp else { return }
+        isSetUp = true
+
+        physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         self.backgroundColor = GameScene.sandColor
         physicsWorld.gravity = CGVector (dx: 0.0, dy: 0.0)
         physicsWorld.contactDelegate = self
 
-        if let sand = makeSandTexture(size: screenSize) {
+        if let sand = makeSandTexture(size: size) {
             let ground = SKSpriteNode(texture: sand)
-            ground.position = CGPoint(x: screenSize.width / 2, y: screenSize.height / 2)
+            ground.position = CGPoint(x: size.width / 2, y: size.height / 2)
             ground.zPosition = -1
             addChild(ground)
         }
@@ -83,7 +89,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     ///
     /// Uses rejection sampling. If no candidate fits after `maxAttempts`, returns the candidate
     /// that is farthest from its nearest neighbor.
-    /// Uses `screenSize` because the scene's `size` is not set yet when `sceneDidLoad` runs.
     private func openPosition(for colony: Colony, awayFrom others: [Colony],
                               maxAttempts: Int = 100) -> CGPoint {
         let halfWidth = colony.frame.width / 2
@@ -93,8 +98,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         var best = CGPoint.zero
         var bestDistance = -CGFloat.infinity
         for _ in 0..<maxAttempts {
-            let candidate = CGPoint(x: CGFloat.random(in: halfWidth...(screenSize.width - halfWidth)),
-                                    y: CGFloat.random(in: halfHeight...(screenSize.height - halfHeight)))
+            let candidate = CGPoint(x: CGFloat.random(in: halfWidth...(size.width - halfWidth)),
+                                    y: CGFloat.random(in: halfHeight...(size.height - halfHeight)))
             let nearest = others.map { hypot($0.position.x - candidate.x, $0.position.y - candidate.y) }
                                 .min() ?? .infinity
             if nearest >= minDistance { return candidate }
@@ -105,7 +110,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         return best
     }
-    
+
     override func update(_ currentTime: TimeInterval) {
         for node in self.children {
             switch node {
@@ -114,11 +119,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
-    
+
     func didBegin(_ contact: SKPhysicsContact) {
         if let ant = contact.bodyA.node as? Ant {
             ant.reactToCollision(body: contact.bodyB.node)
         }
     }
-    
+
 }

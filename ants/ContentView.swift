@@ -8,25 +8,19 @@
 import SwiftUI
 import SpriteKit
 
-let screenSize = CGSize(width: 1024, height: 768)
-
 struct ContentView: View {
+    private static let sceneSize = CGSize(width: 1024, height: 768)
 
-    var scene: SKScene {
-        let scene = GameScene()
-        scene.size = CGSize(width: screenSize.width, height: screenSize.height)
+    // Kept in @State so that SwiftUI re-renders don't create a new scene and restart the
+    // simulation.
+    @State private var scene: GameScene = {
+        let scene = GameScene(size: ContentView.sceneSize)
         scene.scaleMode = .aspectFit
         return scene
-    }
-    
+    }()
+
     var body: some View {
-        HStack {
-            SpriteView(scene: scene)
-                .frame(minWidth: screenSize.width,
-                       maxWidth: screenSize.width,
-                       minHeight: screenSize.height,
-                       maxHeight: screenSize.height)
-        }
+        SpriteView(scene: scene)
+            .frame(width: Self.sceneSize.width, height: Self.sceneSize.height)
     }
 }
-
