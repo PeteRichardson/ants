@@ -10,7 +10,13 @@ import SpriteKit
 class Colony: SKSpriteNode {
     static let defaultPopulation = 100
     
-    init(name: String, population: Int? = Colony.defaultPopulation, location: CGPoint? = nil , color: SKColor = .red) {
+    /// - Parameters:
+    ///   - colorBlendFactor: How strongly `color` tints the anthill texture. At 1.0 SpriteKit
+    ///     multiplies the texture by `color`, so a black tint hides all detail and a red tint
+    ///     keeps only the low-contrast red channel. Use a lower value for those colors.
+    ///   - alpha: Opacity of the anthill over the background.
+    init(name: String, population: Int? = Colony.defaultPopulation, location: CGPoint? = nil , color: SKColor = .red,
+         colorBlendFactor: CGFloat = 1.0, alpha: CGFloat = 0.5) {
         let texture : SKTexture? = SKTexture(imageNamed: "anthill")
         guard let texture else { fatalError("Can't load anthill texture.  Check asset catalog")}
         super.init(texture: texture, color: color,
@@ -18,9 +24,9 @@ class Colony: SKSpriteNode {
         
         self.position = location ?? CGPoint(x: CGFloat.random(in: 0...screenSize.width), y: CGFloat.random(in: 0...screenSize.height))
         self.setScale(0.5)
-        self.alpha = 0.5
+        self.alpha = alpha
         self.name = name
-        self.colorBlendFactor = 1.0
+        self.colorBlendFactor = colorBlendFactor
         
         // TODO:  spread this out over time.
         for _ in 1...population! {

@@ -9,7 +9,7 @@
 > _Simulated ant colonies fight for space._
 <!-- 🖊 TODO: Confirm the tagline. -->
 
-`ants` is a simple MacOS SpriteKit simulation. Three colonies (red, black, and green) each release 100 ants. The ants walk at random, and when ants of different colors touch, they fight until one dies. The project is a sandbox for experiments with ant behavior and with genetic inheritance. A gene model is in the code, but the simulation does not use it yet. The repo also has `genetester`, a command-line tool that shows how genes pass from parents to children across generations.
+`ants` is a simple MacOS SpriteKit simulation. Three colonies (red, black, and amber) each release 100 ants. The ants walk at random, and when ants of different colors touch, they fight until one dies. The project is a sandbox for experiments with ant behavior and with genetic inheritance. A gene model is in the code, but the simulation does not use it yet. The repo also has `genetester`, a command-line tool that shows how genes pass from parents to children across generations.
 
 > **Status:** Experimental / proof-of-concept — use at your own risk.
 
@@ -32,7 +32,7 @@
 
 ## Features
 
-- **Three competing colonies.** Red, black, and green anthills each get a random position in a 1024 × 768 scene and release 100 ants.
+- **Three competing colonies.** Red, black, and amber anthills each get a random position in a 1024 × 768 scene, at least two anthill-widths apart, and release 100 ants.
 - **Random-walk movement.** Each frame, each ant turns by a small angle from a normal distribution (σ = 0.1 rad) and moves forward 2 points.
 - **Size-based combat.** An ant's health and attack come from its size. When enemies touch, each one takes damage equal to the other's attack. An ant with health ≤ 0 is removed.
 - **Visual health.** An ant fades (lower alpha) as it loses health.
@@ -79,7 +79,7 @@ The `ants` target uses automatic signing with a set development team, and the ap
 </p>
 -->
 
-1. Run the `ants` scheme. A 1024 × 768 window opens with a white background.
+1. Run the `ants` scheme. A 1024 × 768 window opens with a sand background.
 2. Three tinted anthills appear at random positions, and 300 ants start to walk out from them.
 3. Watch the fights. Open the Xcode console (⇧⌘C) to see the fight log:
 

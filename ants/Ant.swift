@@ -12,7 +12,7 @@ import SpriteKit
 class Ant : SKSpriteNode {
     
     static var antCount = 0;
-    static let antTexture = SKTexture(imageNamed: "smallant")
+    static let antTexture = Ant.outlinedTexture(SKTexture(imageNamed: "smallant"))
     static let defaultColor = SKColor.black
     static let defaultSize = CGSize(width: 15, height: 10)
     static let defaultDirection = 0.0
@@ -68,6 +68,55 @@ class Ant : SKSpriteNode {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         fatalError("Ant.init?(coder:) was called but it's not implemented!")
+    }
+
+    /// Returns a copy of `texture` with a dark one-texel outline just inside the edge of the
+    /// head, thorax, and abdomen. Legs and antennae (one texel wide) get no outline.
+    ///
+    /// The outline is part of the shared texture, so it costs nothing per frame. Tinting
+    /// multiplies texels by the colony color, so the outline stays dark for every colony
+    /// while the middle keeps the colony color, and it fades with the ant's alpha.
+    /// Returns `texture` unchanged if the pixels can't be read.
+    static func outlinedTexture(_ texture: SKTexture, outlineGray: UInt8 = 40) -> SKTexture {
+        let image = texture.cgImage()
+        let width = image.width, height = image.height
+        guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB),
+              let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8,
+                                      bytesPerRow: width * 4, space: colorSpace,
+                                      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue),
+              let data = context.data
+        else { return texture }
+        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+        let pixels = data.bindMemory(to: UInt8.self, capacity: width * height * 4)
+
+        let neighbors = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+        func isSet(_ mask: [Bool], _ index: Int, _ offset: (Int, Int)) -> Bool {
+            let x = index % width + offset.0, y = index / width + offset.1
+            return x >= 0 && y >= 0 && x < width && y < height && mask[y * width + x]
+        }
+
+        let solid = (0..<width * height).map { pixels[$0 * 4 + 3] > 127 }
+        // Morphological opening (erode, then dilate) with a plus-shaped kernel. It removes
+        // the one-texel legs and antennae and keeps the thick body parts.
+        let eroded = (0..<width * height).map { i in
+            solid[i] && neighbors.allSatisfy { isSet(solid, i, $0) }
+        }
+        let body = (0..<width * height).map { i in
+            solid[i] && (eroded[i] || neighbors.contains { isSet(eroded, i, $0) })
+        }
+
+        for i in 0..<width * height where body[i] && neighbors.contains(where: { !isSet(body, i, $0) }) {
+            // Premultiplied alpha: scale the gray by the texel's alpha.
+            let gray = UInt8(Int(outlineGray) * Int(pixels[i * 4 + 3]) / 255)
+            pixels[i * 4] = gray
+            pixels[i * 4 + 1] = gray
+            pixels[i * 4 + 2] = gray
+        }
+
+        guard let outlined = context.makeImage() else { return texture }
+        let result = SKTexture(cgImage: outlined)
+        result.filteringMode = texture.filteringMode
+        return result
     }
     
     // base Ants don't turn, move or grow
