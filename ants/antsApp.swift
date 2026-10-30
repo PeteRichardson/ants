@@ -8,8 +8,7 @@
 import SwiftUI
 
 @main
-struct antsApp: App {
-    
+struct AntsApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

@@ -18,8 +18,8 @@ class GameScene: SKScene, @MainActor SKPhysicsContactDelegate {
         isSetUp = true
 
         physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
-        self.backgroundColor = GameScene.sandColor
-        physicsWorld.gravity = CGVector (dx: 0.0, dy: 0.0)
+        backgroundColor = GameScene.sandColor
+        physicsWorld.gravity = .zero
         physicsWorld.contactDelegate = self
 
         if let sand = makeSandTexture(size: size) {
@@ -112,11 +112,8 @@ class GameScene: SKScene, @MainActor SKPhysicsContactDelegate {
     }
 
     override func update(_ currentTime: TimeInterval) {
-        for node in self.children {
-            switch node {
-            case let colony as Colony: colony.update(currentTime)
-            default: break
-            }
+        for case let colony as Colony in children {
+            colony.update(currentTime)
         }
     }
 
@@ -125,5 +122,4 @@ class GameScene: SKScene, @MainActor SKPhysicsContactDelegate {
             ant.reactToCollision(body: contact.bodyB.node)
         }
     }
-
 }

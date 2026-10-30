@@ -5,66 +5,66 @@
 //  Created by Peter Richardson on 1/13/23.
 //
 
+import OSLog
 import SpriteKit
 
+class Ant: SKSpriteNode {
 
-
-class Ant : SKSpriteNode {
-
-    static var antCount = 0;
+    static var antCount = 0
     static let antTexture = Ant.outlinedTexture(SKTexture(imageNamed: "smallant"))
     static let defaultColor = SKColor.black
     static let defaultSize = CGSize(width: 15, height: 10)
     static let defaultDirection = 0.0
-    var genes : AntGenes = AntGenes()
+    private static let log = Logger(subsystem: "com.peterichardson.ants", category: "fight")
 
-    var direction : CGFloat = Ant.defaultDirection
+    var genes = AntGenes()
+
+    var direction = Ant.defaultDirection
     let moveSpeed = 2.0
-    var health : CGFloat = 0.0
-    var maxHealth : CGFloat = 0.0
-    var attack : CGFloat = 0.0
+    var health = 0.0
+    var maxHealth = 0.0
+    var attack = 0.0
 
     let id = antCount
     /// Colony prefix plus a three-digit number, for example `R042`. Also the node's `name`.
     private(set) var label = ""
-    var eatSound : String? = "bite.m4a"
+    var eatSound: String? = "bite.m4a"
 
     /// - Parameter direction: Starting heading in radians. A new random value for each ant by
     ///   default.
     init(color: SKColor = Ant.defaultColor,
          size: CGSize = Ant.defaultSize,
          position: CGPoint = .zero,
-         direction: CGFloat = .random(in: -.pi ... .pi),
+         direction: Double = .random(in: -.pi ... .pi),
          namePrefix: String = "") {
         super.init(texture: Ant.antTexture, color: color, size: size)
         Ant.antCount += 1
         self.position = position
         self.direction = direction
-        self.zRotation = direction
-        self.speed = 0.5
-        self.health = CGFloat.random(in: 2...3) * self.size.width
-        self.maxHealth = self.health
-        self.attack = CGFloat(Int(self.size.width) + Int.random(in: -5...5))
-        self.label = namePrefix + String(format: "%03d", self.id)
-        self.name = label
+        zRotation = direction
+        speed = 0.5
+        health = Double.random(in: 2...3) * size.width
+        maxHealth = health
+        attack = Double(Int(size.width) + Int.random(in: -5...5))
+        label = namePrefix + id.formatted(.number.precision(.integerLength(3...)).grouping(.never))
+        name = label
 
         let body = SKPhysicsBody(rectangleOf: CGSize(width: size.width * 0.7, height: size.height * 0.7))
         body.isDynamic = true
         body.contactTestBitMask = body.collisionBitMask
-        self.physicsBody = body
+        physicsBody = body
 
-        self.colorBlendFactor = 1.0  // Needed to apply .color to texture
+        colorBlendFactor = 1.0  // Needed to apply .color to texture
     }
 
     convenience init(parent1: Ant, parent2: Ant) {
         self.init()
-        self.genes = AntGenes(parent1: parent1, parent2: parent2)
+        genes = AntGenes(parent1: parent1, parent2: parent2)
     }
 
-
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        fatalError("Ant.init?(coder:) was called but it's not implemented!")
+        fatalError("init(coder:) is not supported")
     }
 
     /// Returns a copy of `texture` with a dark one-texel outline just inside the edge of the
@@ -116,67 +116,62 @@ class Ant : SKSpriteNode {
         return result
     }
 
-    // base Ants don't turn, move or grow
-    func nextDirection() -> CGFloat { return self.direction }
-    func nextPosition() -> CGPoint { return self.position }
+    // Base ants don't turn, move, or grow.
+    func nextDirection() -> Double { direction }
+    func nextPosition() -> CGPoint { position }
 
     func turn() {
-        self.direction = self.nextDirection()
-        self.zRotation = self.direction
+        direction = nextDirection()
+        zRotation = direction
     }
 
     func move() {
-        self.position = self.nextPosition()
+        position = nextPosition()
     }
 
     func update(_ currentTime: TimeInterval) {
-        self.alpha = self.health / self.maxHealth
+        alpha = health / maxHealth
         turn()
         move()
     }
 
     func destroy() {
         Ant.antCount -= 1
-        self.removeFromParent()
+        removeFromParent()
     }
 
-    func isEnemy(_ otherAnt : Ant) -> Bool {
-        return self.color != otherAnt.color
+    func isEnemy(_ otherAnt: Ant) -> Bool {
+        color != otherAnt.color
     }
 
     func fight(_ otherAnt: Ant) {
-        let (bigger, smaller) = self.size.width > otherAnt.size.width ? (self, otherAnt) : (otherAnt, self)
-         if let s = self.eatSound {
-            self.run(SKAction.playSoundFileNamed(s, waitForCompletion: false))
+        let (bigger, smaller) = size.width > otherAnt.size.width ? (self, otherAnt) : (otherAnt, self)
+        if let eatSound {
+            run(SKAction.playSoundFileNamed(eatSound, waitForCompletion: false))
         }
-        print(" \(smaller.status) vs \(bigger.status):  \(smaller.label) -\(bigger.attack) | \(bigger.label) -\(smaller.attack) ")
+        Self.log.debug("\(smaller.status, privacy: .public) vs \(bigger.status, privacy: .public): \(smaller.label, privacy: .public) -\(bigger.attack) | \(bigger.label, privacy: .public) -\(smaller.attack)")
         bigger.health -= smaller.attack
         smaller.health -= bigger.attack
-         if smaller.health <= 0 {
-            print("\t\(smaller.status) dies!  ants remaining = \(Ant.antCount)")
-            smaller.destroy()
-        }
-        if bigger.health <= 0 {
-            print("\t\(bigger.status) dies!  ants remaining = \(Ant.antCount)")
-            bigger.destroy()
+        for ant in [smaller, bigger] where ant.health <= 0 {
+            Self.log.debug("\(ant.status, privacy: .public) dies! ants remaining = \(Ant.antCount)")
+            ant.destroy()
         }
     }
 
     func reactToCollision(body: SKNode?) {
-        // only react to ant collisions, for now
+        // Only react to ant collisions, for now.
         guard let otherAnt = body as? Ant else { return }
 
         if isEnemy(otherAnt) {
             fight(otherAnt)
-         }
+        }
     }
 
-    /// Name and current health for the fight log, e.g. `R042[ 71]`.
+    /// Name and current health for the fight log, e.g. `R042[71]`.
     ///
     /// Not an override of `description`: that `NSObject` property is nonisolated, and the
     /// ant's state is isolated to the main actor.
     var status: String {
-        let healthStr = String(format: "%3.0f", self.health)
-       return "\(self.label)[\(healthStr)]"
+        "\(label)[\(health.formatted(.number.precision(.fractionLength(0)).grouping(.never)))]"
     }
 }
