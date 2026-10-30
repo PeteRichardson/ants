@@ -8,26 +8,22 @@
 import Cocoa
 
 class RandomAnt: Ant {
-    static var randomFloats = NormalDistribution(mean: 0.0, deviation: 0.1)
+    static let randomFloats = NormalDistribution(mean: 0.0, deviation: 0.1)
 
-    
+
     override func nextDirection() -> CGFloat {
-        var newDirection = self.direction + RandomAnt.randomFloats.nextFloat()
-        if newDirection == CGFloat.infinity {
-            newDirection = self.direction
-        }
+        var newDirection = self.direction + RandomAnt.randomFloats.next()
         if newDirection < 0       { newDirection += 2 * .pi }
         if newDirection > 2 * .pi { newDirection -= 2 * .pi }
-        assert(newDirection != CGFloat.infinity)
-        assert(!newDirection.isNaN)
+        assert(newDirection.isFinite)
         return newDirection
     }
-    
+
     override func nextPosition() -> CGPoint {
         let newX = self.position.x + self.moveSpeed * Darwin.cos(self.direction)
         let newY = self.position.y + self.moveSpeed * Darwin.sin(self.direction)
         assert(!newX.isNaN && !newY.isNaN)
         return CGPoint(x: newX, y: newY)
     }
-    
+
 }

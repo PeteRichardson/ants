@@ -15,22 +15,20 @@ class Colony: SKSpriteNode {
     ///     multiplies the texture by `color`, so a black tint hides all detail and a red tint
     ///     keeps only the low-contrast red channel. Use a lower value for those colors.
     ///   - alpha: Opacity of the anthill over the background.
-    init(name: String, population: Int? = Colony.defaultPopulation, location: CGPoint? = nil , color: SKColor = .red,
+    init(name: String, population: Int = Colony.defaultPopulation, color: SKColor = .red,
          colorBlendFactor: CGFloat = 1.0, alpha: CGFloat = 0.5) {
-        let texture : SKTexture? = SKTexture(imageNamed: "anthill")
-        guard let texture else { fatalError("Can't load anthill texture.  Check asset catalog")}
+        let texture = SKTexture(imageNamed: "anthill")
         super.init(texture: texture, color: color,
                    size: texture.size())
 
-        self.position = location ?? .zero
         self.setScale(0.5)
         self.alpha = alpha
         self.name = name
         self.colorBlendFactor = colorBlendFactor
 
         // TODO:  spread this out over time.
-        for _ in 1...population! {
-            addAnt()
+        for _ in 0..<population {
+            addAnt(namePrefix: name)
         }
     }
 
@@ -49,15 +47,11 @@ class Colony: SKSpriteNode {
         }
     }
 
-    func addAnt() {
+    private func addAnt(namePrefix: String) {
         let s : Int = Int.random(in: 26...42)
-        let color = self.color
-        let position = CGPoint(x:0.0, y:0.0)
-
-        let ant = RandomAnt(color: color,
+        let ant = RandomAnt(color: self.color,
                       size: CGSize(width: Int(Double(s) * 1.34), height: s),
-                      position: position)
-        ant.name = self.name! + "\(ant.name!)"
+                      namePrefix: namePrefix)
         addChild(ant)
     }
 

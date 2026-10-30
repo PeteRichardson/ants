@@ -26,33 +26,31 @@ struct AntGenes : CustomStringConvertible {
     let meanSpeed : CGFloat             // affects how fast an ant can move
     let meanVisionStrength : CGFloat    // affects how far an ant can see
     let meanCarryCapacity : CGFloat     // affects how much an ant can carry
-    
-    static var randomGenes = NormalDistribution(mean: 0.5, deviation: 0.1)
-    static var randomFloats = NormalDistribution(mean: 0.0, deviation: 0.1)
 
+    static let randomGenes = NormalDistribution(mean: 0.5, deviation: 0.1)
+    static let randomFloats = NormalDistribution(mean: 0.0, deviation: 0.1)
+
+    // One parent's gene, picked at random, plus a small normally distributed mutation.
     static func combine(_ mg : CGFloat, _ fg : CGFloat) -> CGFloat {
-        // average of mothers and fathers gene + small random factor?
-        // TODO: random factor here should all be from a normal distribution
         let base = Int.random(in: 0...1) == 0 ? mg : fg
-        var result = base + AntGenes.randomFloats.nextFloat()
+        var result = base + AntGenes.randomFloats.next()
         if result > 1.0 { result = 1.0 }
         if result < 0.0 { result = 0.0 }
         return result
     }
-    
-    // Create a random set of genes
-    // TODO:  these random factors should all be from a normal distribution
+
+    // Create a random set of genes from a normal distribution around 0.5.
     init() {
-        self.meanBirthSize = AntGenes.randomGenes.nextFloat()
-        self.meanBirthHealth = AntGenes.randomGenes.nextFloat()
-        self.meanBiteStrength = AntGenes.randomGenes.nextFloat()
-        self.meanArmorClass = AntGenes.randomGenes.nextFloat()
-        self.meanRecoveryRate = AntGenes.randomGenes.nextFloat()
-        self.meanSpeed = AntGenes.randomGenes.nextFloat()
-        self.meanVisionStrength = AntGenes.randomGenes.nextFloat()
-        self.meanCarryCapacity = AntGenes.randomGenes.nextFloat()
+        self.meanBirthSize = AntGenes.randomGenes.next()
+        self.meanBirthHealth = AntGenes.randomGenes.next()
+        self.meanBiteStrength = AntGenes.randomGenes.next()
+        self.meanArmorClass = AntGenes.randomGenes.next()
+        self.meanRecoveryRate = AntGenes.randomGenes.next()
+        self.meanSpeed = AntGenes.randomGenes.next()
+        self.meanVisionStrength = AntGenes.randomGenes.next()
+        self.meanCarryCapacity = AntGenes.randomGenes.next()
     }
-    
+
     // Create a new set of genes based on two parent ants
     init(parent1: Ant, parent2: Ant) {
         let genes1 = parent1.genes
@@ -66,7 +64,7 @@ struct AntGenes : CustomStringConvertible {
         self.meanVisionStrength = AntGenes.combine(genes1.meanVisionStrength, genes2.meanVisionStrength)
         self.meanCarryCapacity = AntGenes.combine(genes1.meanCarryCapacity, genes2.meanCarryCapacity)
     }
-    
+
     var description: String {
         let formatstr = "%.2f"
         let mSizeStr = String(format: formatstr, self.meanBirthSize)

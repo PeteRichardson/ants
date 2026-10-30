@@ -7,28 +7,34 @@
 
 import Foundation
 
-import GameplayKit
+/// Samples a normal (Gaussian) distribution with the Box–Muller transform.
+///
+/// A value type with no stored generator, so it is `Sendable` and safe to share as a
+/// `static let`. Pass a generator to `next(using:)` for reproducible sequences.
+struct NormalDistribution: Sendable {
+    let mean: Double
+    let deviation: Double
 
-class NormalDistribution {
-    private let randomSource: GKRandomSource
-    let mean: CGFloat
-    let deviation: CGFloat
-
-    init(mean: CGFloat, deviation: CGFloat) {
+    init(mean: Double, deviation: Double) {
         precondition(deviation >= 0)
-        self.randomSource = GKRandomSource()
         self.mean = mean
         self.deviation = deviation
     }
 
-    func nextFloat() -> CGFloat {
+    /// Returns the next sample, using `generator` for the uniform inputs.
+    func next(using generator: inout some RandomNumberGenerator) -> Double {
         guard deviation > 0 else { return mean }
 
-        let x1 = randomSource.nextUniform() // a random number between 0 and 1
-        let x2 = randomSource.nextUniform() // a random number between 0 and 1
-        let z1 = CGFloat(sqrt(-2 * log(x1)) * cos(2 * Float.pi * x2)) // z1 is normally distributed
+        // u1 starts above zero so that log(u1) is always finite.
+        let u1 = Double.random(in: Double.leastNonzeroMagnitude..<1, using: &generator)
+        let u2 = Double.random(in: 0..<1, using: &generator)
+        let z = (-2 * log(u1)).squareRoot() * cos(2 * .pi * u2)   // standard normal
+        return z * deviation + mean
+    }
 
-        // Convert z1 from the Standard Normal Distribution to our Normal Distribution
-        return CGFloat(z1 * deviation + mean)
+    /// Returns the next sample, using the system random number generator.
+    func next() -> Double {
+        var generator = SystemRandomNumberGenerator()
+        return next(using: &generator)
     }
 }

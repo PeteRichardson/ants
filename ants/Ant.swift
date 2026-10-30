@@ -16,7 +16,6 @@ class Ant : SKSpriteNode {
     static let defaultColor = SKColor.black
     static let defaultSize = CGSize(width: 15, height: 10)
     static let defaultDirection = 0.0
-    static let defaultMass : CGFloat = 1.0
     var genes : AntGenes = AntGenes()
 
     var direction : CGFloat = Ant.defaultDirection
@@ -26,36 +25,35 @@ class Ant : SKSpriteNode {
     var attack : CGFloat = 0.0
 
     let id = antCount
-    var birthSound : String?
+    /// Colony prefix plus a three-digit number, for example `R042`. Also the node's `name`.
+    private(set) var label = ""
     var eatSound : String? = "bite.m4a"
 
-    init(texture: SKTexture? = nil,
-         color: SKColor? =  Ant.defaultColor,
-         size: CGSize? = Ant.defaultSize,
-         position: CGPoint? = nil,
-         direction: CGFloat? = nil) {
-        super.init(texture: Ant.antTexture,
-                   color: color ?? Ant.defaultColor,
-                   size: size ?? Ant.defaultSize)
+    /// - Parameter direction: Starting heading in radians. A new random value for each ant by
+    ///   default.
+    init(color: SKColor = Ant.defaultColor,
+         size: CGSize = Ant.defaultSize,
+         position: CGPoint = .zero,
+         direction: CGFloat = .random(in: -.pi ... .pi),
+         namePrefix: String = "") {
+        super.init(texture: Ant.antTexture, color: color, size: size)
         Ant.antCount += 1
-        self.position = position ?? .zero
-        self.direction = direction ?? CGFloat.random(in: -.pi ... .pi)
+        self.position = position
+        self.direction = direction
+        self.zRotation = direction
         self.speed = 0.5
         self.health = CGFloat.random(in: 2...3) * self.size.width
         self.maxHealth = self.health
         self.attack = CGFloat(Int(self.size.width) + Int.random(in: -5...5))
-        self.name = String(format: "%03d", self.id)
-        let physRect = CGSize(width: self.size.width * 0.7, height: self.size.height * 0.7)
-        self.physicsBody = SKPhysicsBody(rectangleOf: physRect)
-        self.physicsBody!.isDynamic = true
-        self.physicsBody!.contactTestBitMask = self.physicsBody!.collisionBitMask
+        self.label = namePrefix + String(format: "%03d", self.id)
+        self.name = label
+
+        let body = SKPhysicsBody(rectangleOf: CGSize(width: size.width * 0.7, height: size.height * 0.7))
+        body.isDynamic = true
+        body.contactTestBitMask = body.collisionBitMask
+        self.physicsBody = body
 
         self.colorBlendFactor = 1.0  // Needed to apply .color to texture
-
-        if let s = self.birthSound {
-            self.run(SKAction.playSoundFileNamed(s, waitForCompletion: false))
-        }
-        self.run(SKAction.rotate(toAngle: self.direction, duration: 0.0))
     }
 
     convenience init(parent1: Ant, parent2: Ant) {
@@ -124,7 +122,7 @@ class Ant : SKSpriteNode {
 
     func turn() {
         self.direction = self.nextDirection()
-        self.run(SKAction.rotate(toAngle: self.direction, duration: 0.01, shortestUnitArc: true))
+        self.zRotation = self.direction
     }
 
     func move() {
@@ -151,7 +149,7 @@ class Ant : SKSpriteNode {
          if let s = self.eatSound {
             self.run(SKAction.playSoundFileNamed(s, waitForCompletion: false))
         }
-        print(" \(smaller.status) vs \(bigger.status):  \(smaller.name!) -\(bigger.attack) | \(bigger.name!) -\(smaller.attack) ")
+        print(" \(smaller.status) vs \(bigger.status):  \(smaller.label) -\(bigger.attack) | \(bigger.label) -\(smaller.attack) ")
         bigger.health -= smaller.attack
         smaller.health -= bigger.attack
          if smaller.health <= 0 {
@@ -179,6 +177,6 @@ class Ant : SKSpriteNode {
     /// ant's state is isolated to the main actor.
     var status: String {
         let healthStr = String(format: "%3.0f", self.health)
-       return "\(self.name!)[\(healthStr)]"
+       return "\(self.label)[\(healthStr)]"
     }
 }
