@@ -93,7 +93,8 @@ struct FoodWorld {
                     continue
                 }
             }
-            amounts[cell] += configuration.regrowPace * deltaTime
+            amounts[cell] = min(configuration.capacity,
+                               amounts[cell] + configuration.regrowPace * deltaTime)
         }
     }
 
