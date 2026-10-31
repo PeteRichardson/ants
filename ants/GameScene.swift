@@ -11,6 +11,12 @@ class GameScene: SKScene, @MainActor SKPhysicsContactDelegate {
 
     private var isSetUp = false
 
+    /// The food grid and the layer that draws it. Both are created in `didMove(to:)`,
+    /// which is the first point that knows `size`, or neither is.
+    private var food: (world: FoodWorld, layer: FoodLayer)?
+    /// Scene frame clock. Food rules run on real elapsed seconds.
+    private var lastUpdateTime: TimeInterval?
+
     /// Builds the world the first time the scene is presented. Setup runs here, not in
     /// `sceneDidLoad`, because the scene's `size` is set by then.
     override func didMove(to view: SKView) {
@@ -47,6 +53,17 @@ class GameScene: SKScene, @MainActor SKPhysicsContactDelegate {
             addChild(colony)
             colonies.append(colony)
         }
+
+        let foodConfiguration = FoodWorld.Configuration()
+        var world = FoodWorld(boardSize: size, configuration: foodConfiguration)
+        world.seedFood(count: foodConfiguration.seedCount, avoiding: colonies.map(\.frame))
+        let layer = FoodLayer()
+        // Food lies between the ground (−1) and the ants (default 0): on the sand, but
+        // not covering ants that walk over it.
+        layer.zPosition = -0.5
+        addChild(layer)
+        food = (world: world, layer: layer)
+        layer.sync(with: world)
     }
 
     /// Draws a sand texture: `sandColor` with scattered faint light and dark grains.
@@ -112,6 +129,16 @@ class GameScene: SKScene, @MainActor SKPhysicsContactDelegate {
     }
 
     override func update(_ currentTime: TimeInterval) {
+        let deltaTime = currentTime - (lastUpdateTime ?? currentTime)
+        lastUpdateTime = currentTime
+
+        // Mutate the stored world directly; a local `var` copy would duplicate its
+        // backing arrays on every frame.
+        food?.world.update(deltaTime: deltaTime)
+        if let food {
+            food.layer.sync(with: food.world)
+        }
+
         for case let colony as Colony in children {
             colony.update(currentTime)
         }

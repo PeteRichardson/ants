@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SpriteKit
 
 var failures = 0
 
@@ -230,6 +231,126 @@ func testFuzzInvariants() {
     check(sane, "500 random ticks keep every amount finite and between zero and the cap")
 }
 
+// Layer tests: drive FoodLayer.sync(with:) from a FoodWorld and observe the node tree.
+
+/// The standard test board: 1024 × 768 with the default configuration.
+func makeTestWorld() -> FoodWorld {
+    FoodWorld(boardSize: CGSize(width: 1024, height: 768),
+              configuration: FoodWorld.Configuration())
+}
+
+/// Cell at `row`, `column` of the standard 32-column test grid.
+func cell(row: Int, column: Int) -> Int { row * 32 + column }
+
+@MainActor
+func testLayerDrawsFoodCells() {
+    var world = makeTestWorld()
+    let foodCell = cell(row: 12, column: 16)
+    world.placeFood(at: [foodCell], amount: 60)
+
+    let layer = FoodLayer()
+    layer.sync(with: world)
+    check(layer.nodes.count == 1,
+          "one food cell draws one node, not one per grid cell")
+    check(layer.nodes[foodCell]?.position == world.center(of: foodCell),
+          "the node sits at the center of its cell")
+    check(layer.nodes[foodCell + 1] == nil, "an empty cell gets no node")
+}
+
+@MainActor
+func testLayerShowsAmountBySizeAndAlpha() {
+    var world = makeTestWorld()
+    let fullCell = cell(row: 12, column: 10)
+    let lowCell = cell(row: 12, column: 12)
+    world.placeFood(at: [fullCell], amount: 100)
+    world.placeFood(at: [lowCell], amount: 20)
+
+    let layer = FoodLayer()
+    layer.sync(with: world)
+    guard let fullNode = layer.nodes[fullCell], let lowNode = layer.nodes[lowCell] else {
+        check(false, "both food cells draw nodes to compare")
+        return
+    }
+    check(fullNode.xScale == 1 && fullNode.yScale == 1, "a full spot draws at full size")
+    check(fullNode.xScale > lowNode.xScale, "a fuller cell draws a larger spot")
+    check(fullNode.alpha > lowNode.alpha, "a fuller cell draws a clearer spot")
+    check(fullNode.alpha == 1, "a full spot draws at full clarity")
+}
+
+@MainActor
+func testLayerUpdatesNodeWhenAmountChanges() {
+    var world = makeTestWorld()
+    let foodCell = cell(row: 12, column: 16)
+    world.placeFood(at: [foodCell], amount: 100)
+
+    let layer = FoodLayer()
+    layer.sync(with: world)
+    guard let node = layer.nodes[foodCell] else {
+        check(false, "the spot updates in place when the amount changes")
+        return
+    }
+    let fullAlpha = node.alpha
+    let fullScale = node.xScale
+    _ = world.take(from: foodCell, upTo: 80)
+    layer.sync(with: world)
+    check(layer.nodes[foodCell] === node, "the same node keeps the cell")
+    check(layer.children.count == 1, "the update adds no extra nodes")
+    check(node.alpha < fullAlpha && node.xScale < fullScale,
+          "the spot shrinks and fades as the food is taken")
+}
+
+@MainActor
+func testLayerRemovesNodeWhenCellEmpties() {
+    var world = makeTestWorld()
+    let foodCell = cell(row: 12, column: 16)
+    world.placeFood(at: [foodCell], amount: 60)
+
+    let layer = FoodLayer()
+    layer.sync(with: world)
+    _ = world.take(from: foodCell, upTo: 60)
+    layer.sync(with: world)
+    check(layer.nodes[foodCell] == nil, "an emptied cell loses its node")
+    check(layer.children.isEmpty, "no spot is left drawn on bare sand")
+}
+
+@MainActor
+func testLayerReaddsNodeWhenCellRegrows() {
+    var world = makeTestWorld()
+    let foodCell = cell(row: 12, column: 16)
+    world.placeFood(at: [foodCell], amount: 60)
+
+    let layer = FoodLayer()
+    layer.sync(with: world)
+    _ = world.take(from: foodCell, upTo: 60)
+    layer.sync(with: world)
+
+    // Default regrow delay is 20 seconds.
+    world.update(deltaTime: 20)
+    layer.sync(with: world)
+    check(layer.nodes[foodCell] == nil, "an emptied cell stays bare while the regrow delay runs")
+
+    world.update(deltaTime: 1)
+    layer.sync(with: world)
+    guard let node = layer.nodes[foodCell] else {
+        check(false, "a regrown cell gets its node back")
+        return
+    }
+    check(node.alpha < 0.5, "a just-regrown spot comes back small and faint")
+}
+
+@MainActor
+func testLayerDrawsSpilledFood() {
+    var world = makeTestWorld()
+    world.placeFood(at: [cell(row: 12, column: 16)], amount: 100)
+
+    let layer = FoodLayer()
+    layer.sync(with: world)
+    world.update(deltaTime: 1)
+    layer.sync(with: world)
+    check(layer.nodes.count == 2,
+          "a full location that spills growth draws a second spot on the new cell")
+}
+
 testGridGeometry()
 testPlaceFoodAndAmount()
 testTakeAndRegrowDelay()
@@ -238,6 +359,12 @@ testSpilloverToAdjacentLocations()
 testSurroundedBlockHaltsAndResumes()
 testSeedFoodAvoidsKeepOut()
 testFuzzInvariants()
+testLayerDrawsFoodCells()
+testLayerShowsAmountBySizeAndAlpha()
+testLayerUpdatesNodeWhenAmountChanges()
+testLayerRemovesNodeWhenCellEmpties()
+testLayerReaddsNodeWhenCellRegrows()
+testLayerDrawsSpilledFood()
 
 print(failures == 0 ? "all tests passed" : "\(failures) test(s) failed")
 exit(failures == 0 ? 0 : 1)

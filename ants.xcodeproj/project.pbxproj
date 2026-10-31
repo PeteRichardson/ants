@@ -25,6 +25,8 @@
 		C1FD000130E1000100AB0001 /* FoodWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FD001030E1000100AB0001 /* FoodWorld.swift */; };
 		C1FD000230E1000100AB0001 /* FoodWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FD001030E1000100AB0001 /* FoodWorld.swift */; };
 		C1FD000330E1000100AB0001 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FD001130E1000100AB0001 /* main.swift */; };
+		C1FD000430E1000100AB0001 /* FoodLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FD001430E1000100AB0001 /* FoodLayer.swift */; };
+		C1FD000530E1000100AB0001 /* FoodLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FD001430E1000100AB0001 /* FoodLayer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -69,6 +71,7 @@
 		C1FD001030E1000100AB0001 /* FoodWorld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodWorld.swift; sourceTree = "<group>"; };
 		C1FD001130E1000100AB0001 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		C1FD001230E1000100AB0001 /* foodtester */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = foodtester; sourceTree = BUILT_PRODUCTS_DIR; };
+		C1FD001430E1000100AB0001 /* FoodLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodLayer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +132,7 @@
 				C17A6CE22979AD9B00E43621 /* RandomAnt.swift */,
 				C13749152975E44E00268C54 /* NormalDistribution.swift */,
 				C1FD001030E1000100AB0001 /* FoodWorld.swift */,
+				C1FD001430E1000100AB0001 /* FoodLayer.swift */,
 				C11FED49297106B400E42166 /* Assets.xcassets */,
 				C13749172977518500268C54 /* sounds */,
 				C11FED4E297106B400E42166 /* ants.entitlements */,
@@ -306,6 +310,7 @@
 				C1B388A1297B0E7F0031AB1B /* Colony.swift in Sources */,
 				C13749162975E44E00268C54 /* NormalDistribution.swift in Sources */,
 				C1FD000130E1000100AB0001 /* FoodWorld.swift in Sources */,
+				C1FD000430E1000100AB0001 /* FoodLayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,6 +331,7 @@
 			files = (
 				C1FD000330E1000100AB0001 /* main.swift in Sources */,
 				C1FD000230E1000100AB0001 /* FoodWorld.swift in Sources */,
+				C1FD000530E1000100AB0001 /* FoodLayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

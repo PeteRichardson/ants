@@ -36,6 +36,10 @@ struct FoodWorld {
 
     let columns: Int
     let rows: Int
+    /// Side length of one grid cell, in points.
+    let cellSize: CGFloat
+    /// Most food one location can hold.
+    let capacity: Double
     private let configuration: Configuration
     private var amounts: [Double]
     /// Cells that have held food at some point. Only these grow; other cells are bare sand.
@@ -48,6 +52,8 @@ struct FoodWorld {
         let cellSize = max(1, configuration.cellSize)
         self.columns = Int(boardSize.width / cellSize)
         self.rows = Int(boardSize.height / cellSize)
+        self.cellSize = cellSize
+        self.capacity = configuration.capacity
         self.configuration = configuration
         self.amounts = [Double](repeating: 0, count: columns * rows)
         self.producing = [Bool](repeating: false, count: columns * rows)
@@ -87,8 +93,7 @@ struct FoodWorld {
         while placed < count && attempts < attemptLimit {
             attempts += 1
             let cell = Int.random(in: 0..<(columns * rows))
-            let center = CGPoint(x: (CGFloat(cell % columns) + 0.5) * configuration.cellSize,
-                                y: (CGFloat(cell / columns) + 0.5) * configuration.cellSize)
+            let center = center(of: cell)
             guard !keepOut.contains(where: { $0.contains(center) }) else { continue }
             guard amounts[cell] == 0 else { continue }
             placeFood(at: [cell], amount: configuration.seedAmount)
@@ -128,16 +133,16 @@ struct FoodWorld {
                 }
             }
             let gain = configuration.regrowPace * deltaTime
-            if amounts[cell] >= configuration.capacity {
-                let targets = adjacentCells(of: cell).filter { amounts[$0] < configuration.capacity }
+            if amounts[cell] >= capacity {
+                let targets = adjacentCells(of: cell).filter { amounts[$0] < capacity }
                 if let target = targets.randomElement() {
-                    amounts[target] = min(configuration.capacity, amounts[target] + gain)
+                    amounts[target] = min(capacity, amounts[target] + gain)
                     producing[target] = true
                     delayRemaining[target] = 0
                 }
                 // No adjacent location has free space: this tick's growth is lost.
             } else {
-                amounts[cell] = min(configuration.capacity, amounts[cell] + gain)
+                amounts[cell] = min(capacity, amounts[cell] + gain)
             }
         }
     }
@@ -158,11 +163,17 @@ struct FoodWorld {
         return result
     }
 
+    /// The scene point at the center of `cell`.
+    func center(of cell: Int) -> CGPoint {
+        CGPoint(x: (CGFloat(cell % columns) + 0.5) * cellSize,
+                y: (CGFloat(cell / columns) + 0.5) * cellSize)
+    }
+
     /// Index of the cell containing `point`, or `nil` if the point is off the grid.
     func cellIndex(containing point: CGPoint) -> Int? {
         guard point.x >= 0, point.y >= 0 else { return nil }
-        let column = Int(point.x / configuration.cellSize)
-        let row = Int(point.y / configuration.cellSize)
+        let column = Int(point.x / cellSize)
+        let row = Int(point.y / cellSize)
         guard column < columns, row < rows else { return nil }
         return row * columns + column
     }
