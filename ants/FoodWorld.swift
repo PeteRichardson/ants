@@ -5,6 +5,7 @@
 //  Created by Peter Richardson on 10/31/26.
 //
 
+import CoreGraphics
 import Foundation
 
 /// The food supply on the board: a grid of cells, each holding an amount of food.
@@ -69,6 +70,28 @@ struct FoodWorld {
     func amount(at point: CGPoint) -> Double {
         guard let cell = cellIndex(containing: point) else { return 0 }
         return amount(at: cell)
+    }
+
+    /// Randomly places `count` food locations at launch, at the configured seed amount.
+    ///
+    /// Uses rejection sampling, the same idea as `GameScene.openPosition(for:awayFrom:)`:
+    /// a candidate is rejected when its center lies inside one of the `keepOut` rects
+    /// (anthills) or when the cell already holds food. If no open candidate turns up
+    /// within 100 attempts per remaining location, the seed stops early with what it has.
+    mutating func seedFood(count: Int, avoiding keepOut: [CGRect], maxAttemptsPerLocation: Int = 100) {
+        var placed = 0
+        var attempts = 0
+        let attemptLimit = maxAttemptsPerLocation * Swift.max(count, 1)
+        while placed < count && attempts < attemptLimit {
+            attempts += 1
+            let cell = Int.random(in: 0..<(columns * rows))
+            let center = CGPoint(x: (CGFloat(cell % columns) + 0.5) * configuration.cellSize,
+                                y: (CGFloat(cell / columns) + 0.5) * configuration.cellSize)
+            guard !keepOut.contains(where: { $0.contains(center) }) else { continue }
+            guard amounts[cell] == 0 else { continue }
+            placeFood(at: [cell], amount: configuration.seedAmount)
+            placed += 1
+        }
     }
 
     /// Removes up to `amount` food from a location and returns what was actually taken.

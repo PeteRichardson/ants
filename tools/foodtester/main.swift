@@ -196,12 +196,29 @@ func testSurroundedBlockHaltsAndResumes() {
           "the surrounded location starts growing again once space becomes available")
 }
 
+@MainActor
+func testSeedFoodAvoidsKeepOut() {
+    // Keep out everything except the last 4 columns (x ≥ 896). All seeded locations must
+    // fall in that band.
+    let keepOut = CGRect(x: 0, y: 0, width: 896, height: 768)
+    var world = FoodWorld(boardSize: CGSize(width: 1024, height: 768),
+                         configuration: FoodWorld.Configuration())
+    world.seedFood(count: 10, avoiding: [keepOut])
+    let seededCells = (0..<(world.columns * world.rows)).filter { world.amount(at: $0) > 0 }
+    check(seededCells.count == 10, "seeding places the requested number of locations")
+    check(seededCells.allSatisfy { $0 % world.columns >= 28 },
+          "no seeded location sits inside a keep-out area")
+    check(seededCells.allSatisfy { world.amount(at: $0) == 60 },
+          "seeded locations start at the seed amount")
+}
+
 testGridGeometry()
 testPlaceFoodAndAmount()
 testTakeAndRegrowDelay()
 testCapacityCap()
 testSpilloverToAdjacentLocations()
 testSurroundedBlockHaltsAndResumes()
+testSeedFoodAvoidsKeepOut()
 
 print(failures == 0 ? "all tests passed" : "\(failures) test(s) failed")
 exit(failures == 0 ? 0 : 1)
