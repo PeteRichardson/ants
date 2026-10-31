@@ -68,9 +68,23 @@ func testTakeAndRegrowDelay() {
           "after the delay, regrowth starts at the pace (4 food per second)")
 }
 
+@MainActor
+func testCapacityCap() {
+    var world = FoodWorld(boardSize: CGSize(width: 1024, height: 768),
+                         configuration: FoodWorld.Configuration())
+    world.placeFood(at: [100], amount: 95)
+    world.update(deltaTime: 1)
+    check(world.amount(at: 100) == 99, "a location grows by the pace each second")
+    world.update(deltaTime: 1)
+    check(world.amount(at: 100) == 100, "growth stops at the cap")
+    world.update(deltaTime: 5)
+    check(world.amount(at: 100) == 100, "a full location never grows past the cap")
+}
+
 testGridGeometry()
 testPlaceFoodAndAmount()
 testTakeAndRegrowDelay()
+testCapacityCap()
 
 print(failures == 0 ? "all tests passed" : "\(failures) test(s) failed")
 exit(failures == 0 ? 0 : 1)
