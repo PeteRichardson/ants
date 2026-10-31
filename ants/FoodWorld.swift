@@ -36,11 +36,32 @@ struct FoodWorld {
     let columns: Int
     let rows: Int
     private let configuration: Configuration
+    private var amounts: [Double]
 
     init(boardSize: CGSize, configuration: Configuration = Configuration()) {
         self.columns = Int(boardSize.width / configuration.cellSize)
         self.rows = Int(boardSize.height / configuration.cellSize)
         self.configuration = configuration
+        self.amounts = [Double](repeating: 0, count: columns * rows)
+    }
+
+    /// Marks the given cells as food locations and sets their amount. Locations stay fixed
+    /// for the run; food only ever grows back at these cells.
+    mutating func placeFood(at cells: [Int], amount: Double) {
+        for cell in cells where amounts.indices.contains(cell) {
+            amounts[cell] = amount
+        }
+    }
+
+    /// Food in a cell. Out-of-range cells read as empty.
+    func amount(at cell: Int) -> Double {
+        amounts.indices.contains(cell) ? amounts[cell] : 0
+    }
+
+    /// Food in the cell under `point`. Points off the grid read as empty.
+    func amount(at point: CGPoint) -> Double {
+        guard let cell = cellIndex(containing: point) else { return 0 }
+        return amount(at: cell)
     }
 
     /// Index of the cell containing `point`, or `nil` if the point is off the grid.
