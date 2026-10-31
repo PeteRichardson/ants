@@ -37,12 +37,18 @@ struct FoodWorld {
     let rows: Int
     private let configuration: Configuration
     private var amounts: [Double]
+    /// Cells that have held food at some point. Only these grow; other cells are bare sand.
+    private var producing: [Bool]
+    /// Per-cell countdown for emptied locations. Zero means the location grows freely.
+    private var delayRemaining: [TimeInterval]
 
     init(boardSize: CGSize, configuration: Configuration = Configuration()) {
         self.columns = Int(boardSize.width / configuration.cellSize)
         self.rows = Int(boardSize.height / configuration.cellSize)
         self.configuration = configuration
         self.amounts = [Double](repeating: 0, count: columns * rows)
+        self.producing = [Bool](repeating: false, count: columns * rows)
+        self.delayRemaining = [TimeInterval](repeating: 0, count: columns * rows)
     }
 
     /// Marks the given cells as food locations and sets their amount. Locations stay fixed
@@ -50,6 +56,7 @@ struct FoodWorld {
     mutating func placeFood(at cells: [Int], amount: Double) {
         for cell in cells where amounts.indices.contains(cell) {
             amounts[cell] = amount
+            producing[cell] = true
         }
     }
 
@@ -62,6 +69,32 @@ struct FoodWorld {
     func amount(at point: CGPoint) -> Double {
         guard let cell = cellIndex(containing: point) else { return 0 }
         return amount(at: cell)
+    }
+
+    /// Removes up to `amount` food from a location and returns what was actually taken.
+    /// Emptying a location starts its regrow delay.
+    mutating func take(from cell: Int, upTo amount: Double) -> Double {
+        guard amounts.indices.contains(cell) else { return 0 }
+        let taken = min(amounts[cell], max(0, amount))
+        amounts[cell] -= taken
+        if amounts[cell] == 0 {
+            delayRemaining[cell] = configuration.regrowDelay
+        }
+        return taken
+    }
+
+    /// Advances the food world by `deltaTime` seconds: counts down regrow delays and lets
+    /// every producing location grow at the configured pace.
+    mutating func update(deltaTime: TimeInterval) {
+        for cell in amounts.indices where producing[cell] {
+            if amounts[cell] == 0 {
+                guard delayRemaining[cell] == 0 else {
+                    delayRemaining[cell] = max(0, delayRemaining[cell] - deltaTime)
+                    continue
+                }
+            }
+            amounts[cell] += configuration.regrowPace * deltaTime
+        }
     }
 
     /// Index of the cell containing `point`, or `nil` if the point is off the grid.
