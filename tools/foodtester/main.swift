@@ -65,8 +65,8 @@ func testTakeAndRegrowDelay() {
     world.update(deltaTime: 10)
     check(world.amount(at: 40) == 0, "the location is still empty the moment the delay ends")
     world.update(deltaTime: 1)
-    check(world.amount(at: 40) == 4,
-          "after the delay, regrowth starts at the pace (4 food per second)")
+    check(world.amount(at: 40) == 2,
+          "after the delay, regrowth starts at the pace (2 food per second)")
 }
 
 @MainActor
@@ -75,8 +75,8 @@ func testCapacityCap() {
                          configuration: FoodWorld.Configuration())
     world.placeFood(at: [100], amount: 95)
     world.update(deltaTime: 1)
-    check(world.amount(at: 100) == 99, "a location grows by the pace each second")
-    world.update(deltaTime: 1)
+    check(world.amount(at: 100) == 97, "a location grows by the pace each second")
+    world.update(deltaTime: 2)
     check(world.amount(at: 100) == 100, "growth stops at the cap")
     world.update(deltaTime: 5)
     check(world.amount(at: 100) == 100, "a full location never grows past the cap")
@@ -110,7 +110,7 @@ func testSpilloverToAdjacentLocations() {
     let received = neighbors.filter { world.amount(at: $0) > 0 }
     check(received.count == 1, "a full location puts its extra growth on one adjacent location")
     if let target = received.first {
-        check(world.amount(at: target) == 4, "the adjacent location receives that tick's growth")
+        check(world.amount(at: target) == 2, "the adjacent location receives that tick's growth")
     } else {
         check(false, "the adjacent location receives that tick's growth")
     }
@@ -142,7 +142,7 @@ func testSpilloverToAdjacentLocations() {
     _ = spreading.take(from: receiver, upTo: 100)
     spreading.update(deltaTime: 20)
     spreading.update(deltaTime: 1)
-    check(spreading.amount(at: receiver) == 4,
+    check(spreading.amount(at: receiver) == 2,
           "a location that received spillover becomes a producing location")
 }
 
@@ -174,25 +174,25 @@ func testSurroundedBlockHaltsAndResumes() {
                          configuration: FoodWorld.Configuration())
     world.placeFood(at: block, amount: 100)
 
-    // Tick 1: the center is fully surrounded by full locations, so its 4 of growth is
-    // lost. The 8 block cells on the edge each send their 4 to bare ring cells (none
-    // reaches the cap), so the board gains exactly 8 × 4 = 32.
+    // Tick 1: the center is fully surrounded by full locations, so its 2 of growth is
+    // lost. The 8 block cells on the edge each send their 2 to bare ring cells (none
+    // reaches the cap), so the board gains exactly 8 × 2 = 16.
     world.update(deltaTime: 1)
-    check(abs(sumAll(world) - 932) < 0.001,
-          "a fully surrounded location loses its growth; the 8 edge cells spill 32")
+    check(abs(sumAll(world) - 916) < 0.001,
+          "a fully surrounded location loses its growth; the 8 edge cells spill 16")
     check(world.amount(at: center) == 100, "the surrounded location stays at the cap")
     let allWithinCap = (0..<(world.columns * world.rows)).allSatisfy { world.amount(at: $0) <= 100 }
     check(allWithinCap, "no cell exceeds the cap")
 
     // Open space on one block cell next to the center. That cell is itself an edge cell,
-    // so tick 2 gains: center resumes (+4), the opened cell grows itself (+4), the other
-    // 7 edge cells still spill (7 × 4), and each ring cell that holds food now grows
-    // itself (+4 each).
+    // so tick 2 gains: center resumes (+2), the opened cell grows itself (+2), the other
+    // 7 edge cells still spill (7 × 2), and each ring cell that holds food now grows
+    // itself (+2 each).
     let ringCellsWithFood = (0..<(world.columns * world.rows))
         .filter { world.amount(at: $0) > 0 && !block.contains($0) }
     _ = world.take(from: cellBelowCenter, upTo: 50)
     world.update(deltaTime: 1)
-    let expected = 932 - 50 + 4 + 4 + 28 + 4 * Double(ringCellsWithFood.count)
+    let expected = 916 - 50 + 2 + 2 + 14 + 2 * Double(ringCellsWithFood.count)
     check(abs(sumAll(world) - expected) < 0.001,
           "the surrounded location starts growing again once space becomes available")
 }
@@ -395,14 +395,14 @@ func testAntStartsFeedingOnFood() {
 
 @MainActor
 func testFeedingConvertsFoodToHealth() {
-    // Spec example: a 20%-healthy ant charges at 80% of the ceiling (8/s), so one
-    // second converts exactly 8 × 0.8 = 6.4 food into health, whatever the max is.
+    // Spec example: a 20%-healthy ant charges at 80% of the ceiling (12/s), so one
+    // second converts exactly 12 × 0.8 = 9.6 food into health, whatever the max is.
     var fixture = makeFeedingAnt(healthFraction: 0.2)
     fixture.ant.update(deltaTime: 1, food: &fixture.world)
 
     let gained = fixture.ant.health - fixture.ant.maxHealth * 0.2
     let dropped = 50 - fixture.world.amount(at: fixture.cell)
-    check(abs(gained - 6.4) < 0.001, "a 20%-healthy ant eats 6.4 food in one second")
+    check(abs(gained - 9.6) < 0.001, "a 20%-healthy ant eats 9.6 food in one second")
     // Same quantity left the cell as entered health; tolerate only floating-point
     // rounding, which the two subtraction paths accumulate differently.
     check(abs(gained - dropped) < 1e-9, "food converts to health one to one")

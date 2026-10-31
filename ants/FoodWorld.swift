@@ -30,8 +30,9 @@ struct FoodWorld {
         var capacity: Double = 100
         /// Seconds an emptied location waits before its regrowth starts.
         var regrowDelay: TimeInterval = 20
-        /// Food one producing location adds per second.
-        var regrowPace: Double = 4
+        /// Food one producing location adds per second. Deliberately slower than the ants'
+        /// top healing pace, so a drained spot stays gone long enough to matter.
+        var regrowPace: Double = 2
     }
 
     let columns: Int

@@ -41,7 +41,7 @@ class Ant: SKSpriteNode {
     /// ant charges at 80% of the ceiling, like a battery — and because that curve only
     /// approaches max asymptotically, a gap of `topOffMargin` or less counts as full
     /// and tops the ant off exactly.
-    static let maxFeedingPace = 8.0
+    static let maxFeedingPace = 12.0
     static let topOffMargin = 0.01
 
     /// Health as a fraction of max: the one number behind the fade (alpha), the
