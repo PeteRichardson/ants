@@ -23,6 +23,7 @@
 - [Quick Start](#quick-start)
 - [Controls](#controls)
 - [genetester](#genetester)
+- [foodtester](#foodtester)
 - [How It Works](#how-it-works)
 - [Known Limitations](#known-limitations)
 - [Contributing](#contributing)
@@ -136,6 +137,24 @@ The third line of each block (the child) becomes the first line (the mother) of 
 
 ---
 
+## foodtester
+
+`foodtester` is a command-line tool that tests the food rules in `FoodWorld.swift`: grid
+geometry, seeding with keep-out areas, regrowth after a delay, the per-location cap, and
+spillover to the eight adjacent locations. It prints one `PASS` or `FAIL` line per rule
+and exits non-zero if any rule fails.
+
+### Build and run
+
+```sh
+xcodebuild -project ants.xcodeproj -scheme foodtester -configuration Debug build
+```
+
+Or select the `foodtester` scheme in Xcode and press ⌘R. The tool takes no arguments or
+options.
+
+---
+
 ## How It Works
 
 ```mermaid
@@ -160,8 +179,10 @@ graph TD
 | `ants/Ant.swift` | Base ant: health, attack, combat, collision response |
 | `ants/RandomAnt.swift` | Ant that turns at random and moves forward |
 | `ants/AntGene.swift` | `AntGenes` traits and inheritance |
+| `ants/FoodWorld.swift` | Food grid: seeding, regrowth after a delay, per-location cap, spillover |
 | `ants/NormalDistribution.swift` | Box–Muller normal random numbers from a `GKRandomSource` |
 | `tools/genetester/main.swift` | Command-line inheritance test |
+| `tools/foodtester/main.swift` | Command-line food rule tests |
 
 ---
 
@@ -169,7 +190,9 @@ graph TD
 
 - **Genes have no effect.** Ant size, health, and attack come from random ranges, not from `AntGenes`. Speed, vision, armor, recovery, and carry capacity are not used.
 - **No reproduction.** Ants are only made when a colony starts. No ants are born during a run.
-- **No food, pheromones, or foraging.** Ants only walk and fight.
+- **No food on screen yet.** `FoodWorld` models the food rules (seeding, regrowth, caps,
+  spillover), but the scene does not draw food and ants do not eat it yet. Pheromones
+  and foraging are not modelled.
 - **Fixed scene size.** The scene is always 1024 × 768 points (`screenSize` in `ContentView.swift`).
 - **All ants appear at once.** Each colony makes all 100 ants at start (`Colony.swift:25` has a TODO to spread this over time).
 - **No tests.** The project has no unit or UI test targets.
