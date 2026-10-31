@@ -44,8 +44,10 @@ struct FoodWorld {
     private var delayRemaining: [TimeInterval]
 
     init(boardSize: CGSize, configuration: Configuration = Configuration()) {
-        self.columns = Int(boardSize.width / configuration.cellSize)
-        self.rows = Int(boardSize.height / configuration.cellSize)
+        // Clamp to at least 1 point so a bad config cannot divide by zero.
+        let cellSize = max(1, configuration.cellSize)
+        self.columns = Int(boardSize.width / cellSize)
+        self.rows = Int(boardSize.height / cellSize)
         self.configuration = configuration
         self.amounts = [Double](repeating: 0, count: columns * rows)
         self.producing = [Bool](repeating: false, count: columns * rows)
@@ -98,7 +100,10 @@ struct FoodWorld {
     /// Emptying a location starts its regrow delay.
     mutating func take(from cell: Int, upTo amount: Double) -> Double {
         guard amounts.indices.contains(cell) else { return 0 }
-        let taken = min(amounts[cell], max(0, amount))
+        // A NaN or negative request takes nothing; `min` with NaN returns its first
+        // argument, so clamp with isFinite before comparing.
+        let requested = amount.isFinite ? max(0, amount) : 0
+        let taken = min(amounts[cell], requested)
         amounts[cell] -= taken
         if amounts[cell] == 0 {
             delayRemaining[cell] = configuration.regrowDelay
@@ -124,7 +129,8 @@ struct FoodWorld {
             }
             let gain = configuration.regrowPace * deltaTime
             if amounts[cell] >= configuration.capacity {
-                if let target = adjacentCells(of: cell).filter({ amounts[$0] < configuration.capacity }).randomElement() {
+                let targets = adjacentCells(of: cell).filter { amounts[$0] < configuration.capacity }
+                if let target = targets.randomElement() {
                     amounts[target] = min(configuration.capacity, amounts[target] + gain)
                     producing[target] = true
                     delayRemaining[target] = 0
