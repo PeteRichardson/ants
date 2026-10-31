@@ -145,11 +145,63 @@ func testSpilloverToAdjacentLocations() {
           "a location that received spillover becomes a producing location")
 }
 
+/// Total food on the whole board.
+func sumAll(_ world: FoodWorld) -> Double {
+    (0..<(world.columns * world.rows)).reduce(0) { $0 + world.amount(at: $1) }
+}
+
+/// A 3 × 3 block of cells centered on row 12, column 16 of a 32 × 24 grid.
+func blockCells(around center: Int, columns: Int) -> [Int] {
+    let row = center / columns
+    let column = center % columns
+    var result: [Int] = []
+    for rowOffset in [-1, 0, 1] {
+        for columnOffset in [-1, 0, 1] {
+            result.append((row + rowOffset) * columns + (column + columnOffset))
+        }
+    }
+    return result
+}
+
+@MainActor
+func testSurroundedBlockHaltsAndResumes() {
+    let center = 12 * 32 + 16
+    let block = blockCells(around: center, columns: 32)
+    let cellBelowCenter = center + 32
+
+    var world = FoodWorld(boardSize: CGSize(width: 1024, height: 768),
+                         configuration: FoodWorld.Configuration())
+    world.placeFood(at: block, amount: 100)
+
+    // Tick 1: the center is fully surrounded by full locations, so its 4 of growth is
+    // lost. The 8 block cells on the edge each send their 4 to bare ring cells (none
+    // reaches the cap), so the board gains exactly 8 × 4 = 32.
+    world.update(deltaTime: 1)
+    check(abs(sumAll(world) - 932) < 0.001,
+          "a fully surrounded location loses its growth; the 8 edge cells spill 32")
+    check(world.amount(at: center) == 100, "the surrounded location stays at the cap")
+    let allWithinCap = (0..<(world.columns * world.rows)).allSatisfy { world.amount(at: $0) <= 100 }
+    check(allWithinCap, "no cell exceeds the cap")
+
+    // Open space on one block cell next to the center. That cell is itself an edge cell,
+    // so tick 2 gains: center resumes (+4), the opened cell grows itself (+4), the other
+    // 7 edge cells still spill (7 × 4), and each ring cell that holds food now grows
+    // itself (+4 each).
+    let ringCellsWithFood = (0..<(world.columns * world.rows))
+        .filter { world.amount(at: $0) > 0 && !block.contains($0) }
+    _ = world.take(from: cellBelowCenter, upTo: 50)
+    world.update(deltaTime: 1)
+    let expected = 932 - 50 + 4 + 4 + 28 + 4 * Double(ringCellsWithFood.count)
+    check(abs(sumAll(world) - expected) < 0.001,
+          "the surrounded location starts growing again once space becomes available")
+}
+
 testGridGeometry()
 testPlaceFoodAndAmount()
 testTakeAndRegrowDelay()
 testCapacityCap()
 testSpilloverToAdjacentLocations()
+testSurroundedBlockHaltsAndResumes()
 
 print(failures == 0 ? "all tests passed" : "\(failures) test(s) failed")
 exit(failures == 0 ? 0 : 1)
