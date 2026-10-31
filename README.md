@@ -40,6 +40,9 @@
 - **Food on screen.** Twelve food locations seed at random at launch and draw as green
   spots. A full spot is large and clear; a shrinking spot fades, and an emptied spot
   disappears until the food grows back.
+- **Ants eat.** A wandering ant that reaches food stops and feeds: health rises at a
+  charging pace (fast when badly hurt, slowing near full) while the spot shrinks, and a
+  attacked ant breaks off to fight.
 - **Fight log and sound.** Each fight plays `bite.m4a` and prints the result to the console, for example `R042[ 71] vs B017[ 88]`.
 - **Gene model.** `AntGenes` has eight traits from 0.0 to 1.0: size, health, bite strength, armor, recovery, speed, vision, and carry capacity. A child gets each trait from one parent at random, plus a small normal-distribution change.
 
@@ -145,8 +148,10 @@ The third line of each block (the child) becomes the first line (the mother) of 
 `foodtester` is a command-line tool that tests the food rules in `FoodWorld.swift`: grid
 geometry, seeding with keep-out areas, regrowth after a delay, the per-location cap, and
 spillover to the eight adjacent locations. It also tests the drawing sync in
-`FoodLayer.swift`: spots added, updated, removed, and re-added as cell amounts change. It
-prints one `PASS` or `FAIL` line per rule and exits non-zero if any rule fails.
+`FoodLayer.swift` (spots added, updated, removed, and re-added as cell amounts change)
+and the feeding behavior in `Ant.swift` (starting, charging, stopping, and fight
+interruption). It prints one `PASS` or `FAIL` line per rule and exits non-zero if any
+rule fails.
 
 ### Build and run
 
@@ -169,6 +174,7 @@ graph TD
     GameScene -->|ticks| FoodWorld
     GameScene --> FoodLayer
     FoodLayer -->|reads amounts| FoodWorld
+    Ant -->|bites| FoodWorld
     Colony -->|100×| RandomAnt
     RandomAnt -->|subclass of| Ant
     Ant --> AntGenes
@@ -185,7 +191,7 @@ graph TD
 | `ants/ContentView.swift` | Hosts `GameScene` in a fixed 1024 × 768 `SpriteView` |
 | `ants/GameScene.swift` | Zero-gravity physics world with edge walls; creates the colonies; sends contacts to ants |
 | `ants/Colony.swift` | Anthill sprite; makes and updates its ants |
-| `ants/Ant.swift` | Base ant: health, attack, combat, collision response |
+| `ants/Ant.swift` | Base ant: health, attack, combat, feeding, collision response |
 | `ants/RandomAnt.swift` | Ant that turns at random and moves forward |
 | `ants/AntGene.swift` | `AntGenes` traits and inheritance |
 | `ants/FoodWorld.swift` | Food grid: seeding, regrowth after a delay, per-location cap, spillover |
@@ -200,9 +206,8 @@ graph TD
 
 - **Genes have no effect.** Ant size, health, and attack come from random ranges, not from `AntGenes`. Speed, vision, armor, recovery, and carry capacity are not used.
 - **No reproduction.** Ants are only made when a colony starts. No ants are born during a run.
-- **Ants do not eat yet.** `FoodWorld` models the food rules (seeding, regrowth, caps,
-  spillover) and `FoodLayer` draws the spots, but ants do not take food from it, so spots
-  only ever grow. Pheromones and foraging are not modelled.
+- **No guided foraging.** Ants find food only by wandering onto it. Pheromones, food
+  seeking, and carrying food home are not modelled.
 - **Fixed scene size.** The scene is always 1024 × 768 points (`screenSize` in `ContentView.swift`).
 - **All ants appear at once.** Each colony makes all 100 ants at start (`Colony.swift:25` has a TODO to spread this over time).
 - **No tests.** The project has no unit or UI test targets.

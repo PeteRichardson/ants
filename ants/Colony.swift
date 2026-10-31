@@ -36,9 +36,11 @@ class Colony: SKSpriteNode {
         fatalError("init(coder:) is not supported")
     }
 
-    func update(_ currentTime: TimeInterval) {
+    /// Updates every ant, forwarding the scene's food grid so bites mutate the same
+    /// storage the food layer draws.
+    func update(deltaTime: TimeInterval, food: inout FoodWorld) {
         for case let ant as Ant in children {
-            ant.update(currentTime)
+            ant.update(deltaTime: deltaTime, food: &food)
         }
     }
 

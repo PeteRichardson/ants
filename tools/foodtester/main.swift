@@ -351,6 +351,158 @@ func testLayerDrawsSpilledFood() {
           "a full location that spills growth draws a second spot on the new cell")
 }
 
+// Ant feeding tests: drive Ant.update(deltaTime:food:) against a real FoodWorld.
+
+/// The standard feeding fixture: a scene with a nest at `nestAt`, a red ant at the nest
+/// origin (so the ant stands on the cell under the nest, in scene space), and
+/// `foodAmount` of food placed in that cell. The ant starts at `healthFraction` of its
+/// random max health — full by default, which is the wandering case; pass a lower value
+/// for a hungry ant. The scene is part of the tuple on purpose: `SKNode.parent` does not
+/// keep its scene alive, so a scene that is a local of this function would deallocate
+/// here and every ant would lose its scene (and its coordinate conversion).
+@MainActor
+func makeFeedingAnt(healthFraction: Double = 1.0,
+                    size: CGSize = CGSize(width: 15, height: 10),
+                    nestAt: CGPoint = .zero,
+                    foodAmount: Double = 50)
+    -> (scene: SKScene, nest: SKNode, ant: Ant, world: FoodWorld, cell: Int) {
+    let scene = SKScene(size: CGSize(width: 1024, height: 768))
+    let nest = SKNode()
+    nest.position = nestAt
+    scene.addChild(nest)
+    let ant = RandomAnt(color: .red, size: size, namePrefix: "R")
+    nest.addChild(ant)
+    ant.health = ant.maxHealth * healthFraction
+    var world = makeTestWorld()
+    let cell = world.cellIndex(containing: nestAt) ?? 0
+    if foodAmount > 0 { world.placeFood(at: [cell], amount: foodAmount) }
+    return (scene, nest, ant, world, cell)
+}
+
+@MainActor
+func testAntStartsFeedingOnFood() {
+    var fixture = makeFeedingAnt(healthFraction: 0.8)
+    fixture.ant.update(deltaTime: 1, food: &fixture.world)
+    check(fixture.ant.isFeeding, "an ant that reaches a cell with food starts feeding")
+
+    let wanderer = RandomAnt(color: .red, size: CGSize(width: 15, height: 10), namePrefix: "R")
+    wanderer.health = wanderer.maxHealth * 0.8  // hungry, so bare sand is the only reason to skip
+    wanderer.position = fixture.world.center(of: cell(row: 0, column: 1))
+    fixture.nest.addChild(wanderer)
+    wanderer.update(deltaTime: 1, food: &fixture.world)
+    check(!wanderer.isFeeding, "an ant over bare sand keeps wandering")
+}
+
+@MainActor
+func testFeedingConvertsFoodToHealth() {
+    // Spec example: a 20%-healthy ant charges at 80% of the ceiling (8/s), so one
+    // second converts exactly 8 × 0.8 = 6.4 food into health, whatever the max is.
+    var fixture = makeFeedingAnt(healthFraction: 0.2)
+    fixture.ant.update(deltaTime: 1, food: &fixture.world)
+
+    let gained = fixture.ant.health - fixture.ant.maxHealth * 0.2
+    let dropped = 50 - fixture.world.amount(at: fixture.cell)
+    check(abs(gained - 6.4) < 0.001, "a 20%-healthy ant eats 6.4 food in one second")
+    // Same quantity left the cell as entered health; tolerate only floating-point
+    // rounding, which the two subtraction paths accumulate differently.
+    check(abs(gained - dropped) < 1e-9, "food converts to health one to one")
+    check(fixture.ant.isFeeding, "the ant keeps feeding between bites")
+}
+
+@MainActor
+func testFeedingEndsWhenAntIsFull() {
+    // Near full: the charging curve approaches full asymptotically, so an ant inside
+    // 1% of max is topped off and released rather than nibbling forever.
+    var almostFull = makeFeedingAnt(healthFraction: 0.995, foodAmount: 100)
+    almostFull.ant.update(deltaTime: 1, food: &almostFull.world)
+    check(almostFull.ant.health == almostFull.ant.maxHealth, "an ant within 1% of full is topped off")
+    check(!almostFull.ant.isFeeding, "feeding ends when the ant reaches full health")
+
+    // Wounded: the curve converges and the ant stops by itself within a bounded time.
+    var wounded = makeFeedingAnt(healthFraction: 0.2, foodAmount: 100)
+    // repeat-while: the first update is what starts the feeding.
+    var ticks = 0
+    repeat {
+        wounded.ant.update(deltaTime: 1, food: &wounded.world)
+        ticks += 1
+    } while wounded.ant.isFeeding && ticks < 60
+    check(wounded.ant.health == wounded.ant.maxHealth && !wounded.ant.isFeeding,
+          "a wounded ant charging from 20% reaches full and stops within 60 seconds")
+}
+
+@MainActor
+func testFeedingEndsWhenCellEmpties() {
+    var fixture = makeFeedingAnt(healthFraction: 0.2, foodAmount: 3)  // less than the first bite
+    fixture.ant.update(deltaTime: 1, food: &fixture.world)
+    check(fixture.world.amount(at: fixture.cell) == 0, "the ant drains the small spot")
+    check(!fixture.ant.isFeeding, "feeding ends when the spot runs out")
+
+    let positionBefore = fixture.ant.position
+    fixture.ant.update(deltaTime: 1, food: &fixture.world)
+    check(fixture.ant.position != positionBefore, "the drained ant resumes wandering")
+}
+
+@MainActor
+func testFightInterruptsFeeding() {
+    // Wide victim so it survives the hit; 10% wounded so feeding doesn't stop on full.
+    var fixture = makeFeedingAnt(healthFraction: 0.9, size: CGSize(width: 40, height: 26))
+    let enemy = RandomAnt(color: .black, size: CGSize(width: 12, height: 8), namePrefix: "B")
+    fixture.nest.addChild(enemy)
+
+    fixture.ant.update(deltaTime: 1, food: &fixture.world)
+    check(fixture.ant.isFeeding, "the victim settles on the food before the fight")
+
+    // Here the victim is the side the scene's contact callback would NOT have run
+    // (bodyA is the enemy), so this is the side a fight-time interrupt in fight()'s
+    // body would have missed.
+    enemy.fight(fixture.ant)
+    check(!fixture.ant.isFeeding, "the ant being bitten breaks off its meal")
+
+    fixture.ant.update(deltaTime: 1, food: &fixture.world)
+    check(fixture.ant.isFeeding, "an attacked ant still standing on food resumes eating")
+
+    fixture.ant.fight(enemy)
+    check(!fixture.ant.isFeeding, "an ant that starts the fight breaks off its meal too")
+}
+
+@MainActor
+func testFeedingAntStaysPutButTurns() {
+    var fixture = makeFeedingAnt(healthFraction: 0.2, foodAmount: 500)
+    let positionBefore = fixture.ant.position
+    let directionBefore = fixture.ant.direction
+    // Small ticks: enough frames to see the rule, not enough to fill the ant up.
+    for _ in 0..<10 { fixture.ant.update(deltaTime: 0.1, food: &fixture.world) }
+    check(fixture.ant.isFeeding, "the ant is still mid-meal after ten frames")
+    check(fixture.ant.position == positionBefore, "a feeding ant does not drift")
+    check(fixture.ant.direction != directionBefore, "a feeding ant keeps turning")
+    // SpriteKit re-normalizes zRotation through its transform, so compare the angles
+    // by their trig values instead of bitwise equality.
+    let angleMatches = abs(sin(fixture.ant.zRotation) - sin(fixture.ant.direction)) < 1e-6
+                    && abs(cos(fixture.ant.zRotation) - cos(fixture.ant.direction)) < 1e-6
+    check(angleMatches, "the turn shows up in the sprite")
+}
+
+@MainActor
+func testFeedingLooksUpFoodInSceneCoordinates() {
+    // Nest away from the origin: the ant's local (0, 0) lands on the food only once
+    // converted to scene coordinates, so a missing conversion would find bare sand.
+    var fixture = makeFeedingAnt(healthFraction: 0.2, nestAt: CGPoint(x: 96, y: 64))
+    check(fixture.cell == cell(row: 2, column: 3), "the fixture food sits under the off-origin nest")
+    fixture.ant.update(deltaTime: 1, food: &fixture.world)
+    check(fixture.ant.isFeeding,
+          "the grid lookup converts the ant's colony-local position to scene coordinates")
+}
+
+@MainActor
+func testFullAntWalksPastFood() {
+    var fixture = makeFeedingAnt()  // healthy, standing on the default 50-food spot
+    let positionBefore = fixture.ant.position
+    fixture.ant.update(deltaTime: 1, food: &fixture.world)
+    check(!fixture.ant.isFeeding, "a fully healthy ant does not sit down on food")
+    check(fixture.ant.position != positionBefore, "the healthy ant keeps walking")
+    check(fixture.world.amount(at: fixture.cell) == 50, "walking past leaves the spot untouched")
+}
+
 testGridGeometry()
 testPlaceFoodAndAmount()
 testTakeAndRegrowDelay()
@@ -365,6 +517,14 @@ testLayerUpdatesNodeWhenAmountChanges()
 testLayerRemovesNodeWhenCellEmpties()
 testLayerReaddsNodeWhenCellRegrows()
 testLayerDrawsSpilledFood()
+testAntStartsFeedingOnFood()
+testFeedingConvertsFoodToHealth()
+testFeedingEndsWhenAntIsFull()
+testFeedingEndsWhenCellEmpties()
+testFightInterruptsFeeding()
+testFeedingAntStaysPutButTurns()
+testFeedingLooksUpFoodInSceneCoordinates()
+testFullAntWalksPastFood()
 
 print(failures == 0 ? "all tests passed" : "\(failures) test(s) failed")
 exit(failures == 0 ? 0 : 1)

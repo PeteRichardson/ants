@@ -12,8 +12,11 @@ class GameScene: SKScene, @MainActor SKPhysicsContactDelegate {
     private var isSetUp = false
 
     /// The food grid and the layer that draws it. Both are created in `didMove(to:)`,
-    /// which is the first point that knows `size`, or neither is.
-    private var food: (world: FoodWorld, layer: FoodLayer)?
+    /// which is the first point that knows `size`, or neither is. Kept as separate
+    /// properties so the ants' bites can take the grid `inout` — a stored property of
+    /// the exact type is a stable lvalue; a tuple member behind `!` is not.
+    private var foodWorld: FoodWorld?
+    private var foodLayer: FoodLayer?
     /// Scene frame clock. Food rules run on real elapsed seconds.
     private var lastUpdateTime: TimeInterval?
 
@@ -62,7 +65,8 @@ class GameScene: SKScene, @MainActor SKPhysicsContactDelegate {
         // not covering ants that walk over it.
         layer.zPosition = -0.5
         addChild(layer)
-        food = (world: world, layer: layer)
+        foodWorld = world
+        foodLayer = layer
         layer.sync(with: world)
     }
 
@@ -132,15 +136,19 @@ class GameScene: SKScene, @MainActor SKPhysicsContactDelegate {
         let deltaTime = currentTime - (lastUpdateTime ?? currentTime)
         lastUpdateTime = currentTime
 
-        // Mutate the stored world directly; a local `var` copy would duplicate its
-        // backing arrays on every frame.
-        food?.world.update(deltaTime: deltaTime)
-        if let food {
-            food.layer.sync(with: food.world)
-        }
-
-        for case let colony as Colony in children {
-            colony.update(currentTime)
+        // `didMove(to:)` creates the food system before SpriteKit starts running
+        // updates, so the nil check here just guards the frames before setup, and the
+        // `!`s are the unwrap-once-per-frame idiom. Mutate the stored world directly —
+        // a local `var` copy would duplicate its backing arrays every frame — and end
+        // each read's scope before the bites so the arrays stay uniquely owned.
+        if foodWorld != nil {
+            foodWorld!.update(deltaTime: deltaTime)
+            foodLayer?.sync(with: foodWorld!)
+            // Ants take food from the same storage the layer draws, so the passes stay
+            // in step: regrow, redraw, then bites.
+            for case let colony as Colony in children {
+                colony.update(deltaTime: deltaTime, food: &foodWorld!)
+            }
         }
     }
 

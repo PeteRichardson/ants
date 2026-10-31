@@ -27,6 +27,10 @@
 		C1FD000330E1000100AB0001 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FD001130E1000100AB0001 /* main.swift */; };
 		C1FD000430E1000100AB0001 /* FoodLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FD001430E1000100AB0001 /* FoodLayer.swift */; };
 		C1FD000530E1000100AB0001 /* FoodLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FD001430E1000100AB0001 /* FoodLayer.swift */; };
+		C1FD000630E1000100AB0001 /* Ant.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11FED562971D63D00E42166 /* Ant.swift */; };
+		C1FD000730E1000100AB0001 /* AntGene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B388A2297B31E10031AB1B /* AntGene.swift */; };
+		C1FD000830E1000100AB0001 /* RandomAnt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A6CE22979AD9B00E43621 /* RandomAnt.swift */; };
+		C1FD000930E1000100AB0001 /* NormalDistribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13749152975E44E00268C54 /* NormalDistribution.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -332,6 +336,10 @@
 				C1FD000330E1000100AB0001 /* main.swift in Sources */,
 				C1FD000230E1000100AB0001 /* FoodWorld.swift in Sources */,
 				C1FD000530E1000100AB0001 /* FoodLayer.swift in Sources */,
+				C1FD000630E1000100AB0001 /* Ant.swift in Sources */,
+				C1FD000730E1000100AB0001 /* AntGene.swift in Sources */,
+				C1FD000830E1000100AB0001 /* RandomAnt.swift in Sources */,
+				C1FD000930E1000100AB0001 /* NormalDistribution.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

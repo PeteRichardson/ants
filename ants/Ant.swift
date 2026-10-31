@@ -21,9 +21,36 @@ class Ant: SKSpriteNode {
 
     var direction = Ant.defaultDirection
     let moveSpeed = 2.0
-    var health = 0.0
+
+    /// Health, regained by feeding and lost to fights. Any damage interrupts feeding:
+    /// an ant that is being bitten has to fight, not dine — and that covers both ants
+    /// in a clash, not just the one whose contact the scene happens to react to.
+    var health = 0.0 {
+        didSet {
+            if health < oldValue { stopFeeding() }
+        }
+    }
     var maxHealth = 0.0
     var attack = 0.0
+
+    /// The food cell the ant is eating from while feeding; `nil` while wandering.
+    private var feedingCell: Int?
+
+    /// The regain curve's ceiling and termination, kept together: a bite restores
+    /// health at `maxFeedingPace` scaled by how much health is missing — a 20%-healthy
+    /// ant charges at 80% of the ceiling, like a battery — and because that curve only
+    /// approaches max asymptotically, a gap of `topOffMargin` or less counts as full
+    /// and tops the ant off exactly.
+    static let maxFeedingPace = 8.0
+    static let topOffMargin = 0.01
+
+    /// Health as a fraction of max: the one number behind the fade (alpha), the
+    /// charging pace, and the fullness check.
+    private var healthFraction: Double { health / maxHealth }
+
+    /// The ant's first behavior state: wandering (turn and move) versus feeding (turn
+    /// in place and regain health).
+    var isFeeding: Bool { feedingCell != nil }
 
     let id = antCount
     /// Colony prefix plus a three-digit number, for example `R042`. Also the node's `name`.
@@ -129,10 +156,63 @@ class Ant: SKSpriteNode {
         position = nextPosition()
     }
 
-    func update(_ currentTime: TimeInterval) {
-        alpha = health / maxHealth
+    /// Runs one frame of behavior: turn, then eat if feeding, else wander.
+    ///
+    /// - Parameters:
+    ///   - deltaTime: Seconds since the previous frame, for paced eating.
+    ///   - food: The shared food grid; bites mutate the scene's storage directly.
+    func update(deltaTime: TimeInterval, food: inout FoodWorld) {
+        alpha = healthFraction
         turn()
-        move()
+        // An ant arriving on food takes its first bite the same frame — no free second
+        // of dinner just because it walked in at the start of a tick.
+        if isFeeding || startFeeding(from: food) {
+            feed(deltaTime: deltaTime, from: &food)
+        } else {
+            move()
+        }
+    }
+
+    /// Claims the food cell under the ant as the feeding target. The ant's `position` is
+    /// local to its colony, so convert to scene coordinates before the grid lookup.
+    /// A healthy ant at max health has nothing to gain and doesn't even pause; one
+    /// inside the top-off margin may sit for the top-off bite.
+    private func startFeeding(from food: FoodWorld) -> Bool {
+        guard health < maxHealth, let scene,
+              let cell = food.cellIndex(containing: convert(position, to: scene)),
+              food.amount(at: cell) > 0
+        else { return false }
+        feedingCell = cell
+        return true
+    }
+
+    private var isNearFull: Bool {
+        1 - healthFraction <= Self.topOffMargin
+    }
+
+    /// Takes one paced bite from the feeding cell and converts it to health one to one.
+    private func feed(deltaTime: TimeInterval, from food: inout FoodWorld) {
+        guard let cell = feedingCell else { return }
+        if isNearFull {
+            health = maxHealth
+            stopFeeding()
+            return
+        }
+        let room = maxHealth - health
+        let pace = Self.maxFeedingPace * (1 - healthFraction)
+        let available = food.amount(at: cell)
+        // `take` clamps to what the cell actually holds and reports the bite size.
+        let taken = food.take(from: cell, upTo: min(pace * deltaTime, room))
+        health += taken
+        if available - taken <= 0 {
+            // The spot is gone; wander off and let it regrow somewhere else.
+            stopFeeding()
+        }
+    }
+
+    /// Ends feeding; the ant resumes wandering on the next update.
+    private func stopFeeding() {
+        feedingCell = nil
     }
 
     func destroy() {
@@ -145,6 +225,8 @@ class Ant: SKSpriteNode {
     }
 
     func fight(_ otherAnt: Ant) {
+        // No explicit feeding interrupt here: the `health` observer stops the meal for
+        // both ants the moment either loses health.
         let (bigger, smaller) = size.width > otherAnt.size.width ? (self, otherAnt) : (otherAnt, self)
         if let eatSound {
             run(SKAction.playSoundFileNamed(eatSound, waitForCompletion: false))
