@@ -22,10 +22,22 @@
 		C17A6CE32979AD9B00E43621 /* RandomAnt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A6CE22979AD9B00E43621 /* RandomAnt.swift */; };
 		C1B388A1297B0E7F0031AB1B /* Colony.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B388A0297B0E7F0031AB1B /* Colony.swift */; };
 		C1B388A3297B31E10031AB1B /* AntGene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B388A2297B31E10031AB1B /* AntGene.swift */; };
+		C1FD000130E1000100AB0001 /* FoodWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FD001030E1000100AB0001 /* FoodWorld.swift */; };
+		C1FD000230E1000100AB0001 /* FoodWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FD001030E1000100AB0001 /* FoodWorld.swift */; };
+		C1FD000330E1000100AB0001 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FD001130E1000100AB0001 /* main.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		C14C502D297B58450028E546 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		C1FD003230E1000100AB0001 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -54,6 +66,9 @@
 		C17A6CE22979AD9B00E43621 /* RandomAnt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomAnt.swift; sourceTree = "<group>"; };
 		C1B388A0297B0E7F0031AB1B /* Colony.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colony.swift; sourceTree = "<group>"; };
 		C1B388A2297B31E10031AB1B /* AntGene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntGene.swift; sourceTree = "<group>"; };
+		C1FD001030E1000100AB0001 /* FoodWorld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodWorld.swift; sourceTree = "<group>"; };
+		C1FD001130E1000100AB0001 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		C1FD001230E1000100AB0001 /* foodtester */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = foodtester; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +80,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C14C502C297B58450028E546 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C1FD003130E1000100AB0001 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -90,6 +112,7 @@
 			children = (
 				C11FED42297106B300E42166 /* ants.app */,
 				C14C502F297B58450028E546 /* genetester */,
+				C1FD001230E1000100AB0001 /* foodtester */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -105,6 +128,7 @@
 				C1B388A2297B31E10031AB1B /* AntGene.swift */,
 				C17A6CE22979AD9B00E43621 /* RandomAnt.swift */,
 				C13749152975E44E00268C54 /* NormalDistribution.swift */,
+				C1FD001030E1000100AB0001 /* FoodWorld.swift */,
 				C11FED49297106B400E42166 /* Assets.xcassets */,
 				C13749172977518500268C54 /* sounds */,
 				C11FED4E297106B400E42166 /* ants.entitlements */,
@@ -137,10 +161,19 @@
 			path = genetester;
 			sourceTree = "<group>";
 		};
+		C1FD001330E1000100AB0001 /* foodtester */ = {
+			isa = PBXGroup;
+			children = (
+				C1FD001130E1000100AB0001 /* main.swift */,
+			);
+			path = foodtester;
+			sourceTree = "<group>";
+		};
 		C14C5036297B584F0028E546 /* tools */ = {
 			isa = PBXGroup;
 			children = (
 				C14C5030297B58450028E546 /* genetester */,
+				C1FD001330E1000100AB0001 /* foodtester */,
 			);
 			path = tools;
 			sourceTree = "<group>";
@@ -184,6 +217,25 @@
 			productReference = C14C502F297B58450028E546 /* genetester */;
 			productType = "com.apple.product-type.tool";
 		};
+		C1FD002030E1000100AB0001 /* foodtester */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C1FD004030E1000100AB0001 /* Build configuration list for PBXNativeTarget "foodtester" */;
+			buildPhases = (
+				C1FD003030E1000100AB0001 /* Sources */,
+				C1FD003130E1000100AB0001 /* Frameworks */,
+				C1FD003230E1000100AB0001 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = foodtester;
+			packageProductDependencies = (
+			);
+			productName = foodtester;
+			productReference = C1FD001230E1000100AB0001 /* foodtester */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -198,6 +250,9 @@
 						CreatedOnToolsVersion = 14.2;
 					};
 					C14C502E297B58450028E546 = {
+						CreatedOnToolsVersion = 14.2;
+					};
+					C1FD002030E1000100AB0001 = {
 						CreatedOnToolsVersion = 14.2;
 					};
 				};
@@ -219,6 +274,7 @@
 			targets = (
 				C11FED41297106B300E42166 /* ants */,
 				C14C502E297B58450028E546 /* genetester */,
+				C1FD002030E1000100AB0001 /* foodtester */,
 			);
 		};
 /* End PBXProject section */
@@ -249,6 +305,7 @@
 				C17A6CE32979AD9B00E43621 /* RandomAnt.swift in Sources */,
 				C1B388A1297B0E7F0031AB1B /* Colony.swift in Sources */,
 				C13749162975E44E00268C54 /* NormalDistribution.swift in Sources */,
+				C1FD000130E1000100AB0001 /* FoodWorld.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,6 +317,15 @@
 				C14C5038297B587C0028E546 /* AntGene.swift in Sources */,
 				C14C5032297B58450028E546 /* main.swift in Sources */,
 				C14C5037297B58760028E546 /* Ant.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C1FD003030E1000100AB0001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C1FD000330E1000100AB0001 /* main.swift in Sources */,
+				C1FD000230E1000100AB0001 /* FoodWorld.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -475,6 +541,34 @@
 			};
 			name = Release;
 		};
+		C1FD004130E1000100AB0001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		C1FD004230E1000100AB0001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -501,6 +595,15 @@
 			buildConfigurations = (
 				C14C5033297B58450028E546 /* Debug */,
 				C14C5034297B58450028E546 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C1FD004030E1000100AB0001 /* Build configuration list for PBXNativeTarget "foodtester" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C1FD004130E1000100AB0001 /* Debug */,
+				C1FD004230E1000100AB0001 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

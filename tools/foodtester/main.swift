@@ -212,6 +212,24 @@ func testSeedFoodAvoidsKeepOut() {
           "seeded locations start at the seed amount")
 }
 
+@MainActor
+func testFuzzInvariants() {
+    var world = FoodWorld(boardSize: CGSize(width: 1024, height: 768),
+                         configuration: FoodWorld.Configuration())
+    world.seedFood(count: 12, avoiding: [])
+    var sane = true
+    for _ in 0..<500 {
+        world.update(deltaTime: .random(in: 0.1...1.0))
+        _ = world.take(from: Int.random(in: 0..<(world.columns * world.rows)),
+                      upTo: .random(in: 0...150))
+        for cell in 0..<(world.columns * world.rows) {
+            sane = sane && world.amount(at: cell).isFinite
+                      && (0...100).contains(world.amount(at: cell))
+        }
+    }
+    check(sane, "500 random ticks keep every amount finite and between zero and the cap")
+}
+
 testGridGeometry()
 testPlaceFoodAndAmount()
 testTakeAndRegrowDelay()
@@ -219,6 +237,7 @@ testCapacityCap()
 testSpilloverToAdjacentLocations()
 testSurroundedBlockHaltsAndResumes()
 testSeedFoodAvoidsKeepOut()
+testFuzzInvariants()
 
 print(failures == 0 ? "all tests passed" : "\(failures) test(s) failed")
 exit(failures == 0 ? 0 : 1)
