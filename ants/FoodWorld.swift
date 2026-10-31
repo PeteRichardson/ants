@@ -83,19 +83,50 @@ struct FoodWorld {
         return taken
     }
 
-    /// Advances the food world by `deltaTime` seconds: counts down regrow delays and lets
-    /// every producing location grow at the configured pace.
+    /// Advances the food world by `deltaTime` seconds.
+    ///
+    /// Every producing location grows at the configured pace. A location at its cap sends
+    /// that tick's growth to one adjacent location at random, the 8 directions around it.
+    /// The receiving location becomes a producer itself, clamped at its own cap. If every
+    /// adjacent location is full, the growth is lost until space becomes available.
+    /// Cells that receive food start growing on the next update, not the current one.
     mutating func update(deltaTime: TimeInterval) {
-        for cell in amounts.indices where producing[cell] {
+        let producingNow = producing
+        for cell in amounts.indices where producingNow[cell] {
             if amounts[cell] == 0 {
                 guard delayRemaining[cell] == 0 else {
                     delayRemaining[cell] = max(0, delayRemaining[cell] - deltaTime)
                     continue
                 }
             }
-            amounts[cell] = min(configuration.capacity,
-                               amounts[cell] + configuration.regrowPace * deltaTime)
+            let gain = configuration.regrowPace * deltaTime
+            if amounts[cell] >= configuration.capacity {
+                if let target = adjacentCells(of: cell).filter({ amounts[$0] < configuration.capacity }).randomElement() {
+                    amounts[target] = min(configuration.capacity, amounts[target] + gain)
+                    producing[target] = true
+                    delayRemaining[target] = 0
+                }
+                // No adjacent location has free space: this tick's growth is lost.
+            } else {
+                amounts[cell] = min(configuration.capacity, amounts[cell] + gain)
+            }
         }
+    }
+
+    /// The 8 cells around `cell` (orthogonal and diagonal), clipped to the grid.
+    private func adjacentCells(of cell: Int) -> [Int] {
+        let row = cell / columns
+        let column = cell % columns
+        var result: [Int] = []
+        for rowOffset in [-1, 0, 1] {
+            for columnOffset in [-1, 0, 1] where rowOffset != 0 || columnOffset != 0 {
+                let neighborRow = row + rowOffset
+                let neighborColumn = column + columnOffset
+                guard (0..<rows).contains(neighborRow), (0..<columns).contains(neighborColumn) else { continue }
+                result.append(neighborRow * columns + neighborColumn)
+            }
+        }
+        return result
     }
 
     /// Index of the cell containing `point`, or `nil` if the point is off the grid.
