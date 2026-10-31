@@ -81,10 +81,75 @@ func testCapacityCap() {
     check(world.amount(at: 100) == 100, "a full location never grows past the cap")
 }
 
+/// The 8 cells around row 12, column 16 (cell 400) of a 32 × 24 grid — a center cell
+/// is far enough from every edge that all its diagonals exist.
+func neighborCells(of center: Int, columns: Int) -> [Int] {
+    let row = center / columns
+    let column = center % columns
+    var result: [Int] = []
+    for rowOffset in [-1, 0, 1] {
+        for columnOffset in [-1, 0, 1] where rowOffset != 0 || columnOffset != 0 {
+            result.append((row + rowOffset) * columns + (column + columnOffset))
+        }
+    }
+    return result
+}
+
+@MainActor
+func testSpilloverToAdjacentLocations() {
+    let center = 12 * 32 + 16
+    let neighbors = neighborCells(of: center, columns: 32)
+    check(neighbors.count == 8, "the center cell has 8 neighbors")
+
+    var world = FoodWorld(boardSize: CGSize(width: 1024, height: 768),
+                         configuration: FoodWorld.Configuration())
+    world.placeFood(at: [center], amount: 100)
+    world.update(deltaTime: 1)
+    check(world.amount(at: center) == 100, "a full location keeps its stored food")
+    let received = neighbors.filter { world.amount(at: $0) > 0 }
+    check(received.count == 1, "a full location puts its extra growth on one adjacent location")
+    if let target = received.first {
+        check(world.amount(at: target) == 4, "the adjacent location receives that tick's growth")
+    } else {
+        check(false, "the adjacent location receives that tick's growth")
+    }
+
+    // Every direction, including diagonals, must be reachable by the random choice.
+    var seenDirections: Set<Int> = []
+    for _ in 0..<400 {
+        var fresh = FoodWorld(boardSize: CGSize(width: 1024, height: 768),
+                             configuration: FoodWorld.Configuration())
+        fresh.placeFood(at: [center], amount: 100)
+        fresh.update(deltaTime: 1)
+        if let target = neighborCells(of: center, columns: 32).first(where: { fresh.amount(at: $0) > 0 }) {
+            seenDirections.insert(target)
+        }
+    }
+    check(seenDirections.count == 8,
+          "all 8 adjacent directions, including diagonals, can receive spillover")
+
+    // A location that received spillover regrows on its own once emptied.
+    var spreading = FoodWorld(boardSize: CGSize(width: 1024, height: 768),
+                             configuration: FoodWorld.Configuration())
+    spreading.placeFood(at: [center], amount: 100)
+    spreading.update(deltaTime: 1)
+    guard let receiver = neighborCells(of: center, columns: 32).first(where: { spreading.amount(at: $0) > 0 }) else {
+        check(false, "a location that received spillover becomes a producing location")
+        return
+    }
+    _ = spreading.take(from: center, upTo: 100)
+    _ = spreading.take(from: receiver, upTo: 100)
+    spreading.update(deltaTime: 20)
+    spreading.update(deltaTime: 1)
+    check(spreading.amount(at: receiver) == 4,
+          "a location that received spillover becomes a producing location")
+}
+
 testGridGeometry()
 testPlaceFoodAndAmount()
 testTakeAndRegrowDelay()
 testCapacityCap()
+testSpilloverToAdjacentLocations()
 
 print(failures == 0 ? "all tests passed" : "\(failures) test(s) failed")
 exit(failures == 0 ? 0 : 1)
