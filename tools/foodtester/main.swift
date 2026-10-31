@@ -33,7 +33,22 @@ func testGridGeometry() {
           "point off the board has no cell")
 }
 
+@MainActor
+func testPlaceFoodAndAmount() {
+    var world = FoodWorld(boardSize: CGSize(width: 1024, height: 768),
+                         configuration: FoodWorld.Configuration())
+    world.placeFood(at: [5], amount: 60)
+    check(world.amount(at: 5) == 60, "a placed location holds the placed amount")
+    check(world.amount(at: 6) == 0, "an untouched location holds no food")
+    // Cell 5 is row 0, column 5; its center is (5 × 32 + 16, 16) = (176, 16).
+    check(world.amount(at: CGPoint(x: 176, y: 16)) == 60,
+          "reading amount at a point returns the food in the cell under it")
+    check(world.amount(at: CGPoint(x: 2000, y: 2000)) == 0,
+          "reading amount off the board returns no food")
+}
+
 testGridGeometry()
+testPlaceFoodAndAmount()
 
 print(failures == 0 ? "all tests passed" : "\(failures) test(s) failed")
 exit(failures == 0 ? 0 : 1)
