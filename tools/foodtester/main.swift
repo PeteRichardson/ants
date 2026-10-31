@@ -47,8 +47,30 @@ func testPlaceFoodAndAmount() {
           "reading amount off the board returns no food")
 }
 
+@MainActor
+func testTakeAndRegrowDelay() {
+    var world = FoodWorld(boardSize: CGSize(width: 1024, height: 768),
+                         configuration: FoodWorld.Configuration())
+    world.placeFood(at: [40], amount: 60)
+    check(world.take(from: 40, upTo: 30) == 30, "take returns up to the requested amount")
+    check(world.amount(at: 40) == 30, "a partial take leaves the rest in place")
+    check(world.take(from: 40, upTo: 100) == 30, "take returns only what is there")
+    check(world.amount(at: 40) == 0, "taking everything empties the location")
+    check(world.take(from: 41, upTo: 10) == 0, "take from an empty location returns nothing")
+
+    // Default regrow delay is 20 seconds.
+    world.update(deltaTime: 10)
+    check(world.amount(at: 40) == 0, "an emptied location stays empty while the delay runs")
+    world.update(deltaTime: 10)
+    check(world.amount(at: 40) == 0, "the location is still empty the moment the delay ends")
+    world.update(deltaTime: 1)
+    check(world.amount(at: 40) == 4,
+          "after the delay, regrowth starts at the pace (4 food per second)")
+}
+
 testGridGeometry()
 testPlaceFoodAndAmount()
+testTakeAndRegrowDelay()
 
 print(failures == 0 ? "all tests passed" : "\(failures) test(s) failed")
 exit(failures == 0 ? 0 : 1)
